@@ -24,6 +24,10 @@ function core_engine_action_lead_ingest(array $lead_meta) {
     do_action('core_engine_lead_ingest', $lead_meta);
 }
 
+function core_engine_action_ingest_event(array $payload) {
+    do_action('core_ingest_event', $payload);
+}
+
 /**
  * Canonical filter hooks.
  */

@@ -27,6 +27,8 @@ function core_handle_autowebinar_payload(array $payload) {
         return;
     }
 
+    do_action('core_ingest_event', $payload);
+
     $lead_meta = array(
         'source' => 'autowebinar',
         'webinar_id' => $webinar_id,
