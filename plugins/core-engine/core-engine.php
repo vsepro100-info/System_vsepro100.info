@@ -93,6 +93,36 @@ function core_engine_action_ingest_event(array $payload) {
 }
 
 /**
+ * Orchestrates AutoWebinar ingest payload into canonical events.
+ *
+ * @param array $payload
+ * @return bool True when the ingest event is emitted; false when required fields are missing.
+ */
+function core_engine_handle_autowebinar_payload(array $payload) {
+    if (!core_engine_action_ingest_event($payload)) {
+        return false;
+    }
+
+    $webinar_id = $payload['webinar_id'] ?? null;
+    $entry_timestamp = $payload['entry_timestamp'] ?? null;
+
+    $lead_meta = array(
+        'source' => 'autowebinar',
+        'webinar_id' => $webinar_id,
+        'entry_timestamp' => $entry_timestamp,
+        'user_agent' => $payload['user_agent'] ?? null,
+        'ip' => $payload['ip'] ?? null,
+    );
+
+    if (!empty($payload['ref'])) {
+        $lead_meta['ref'] = $payload['ref'];
+    }
+
+    do_action('core_lead_ingest', $lead_meta);
+    return true;
+}
+
+/**
  * Canonical filter hooks.
  */
 function core_engine_filter_lead_meta(array $lead_meta) {
