@@ -30,6 +30,33 @@ function core_engine_action_lead_ingest(array $lead_meta) {
 }
 
 /**
+ * Ingest subtype registry.
+ */
+function &core_engine_get_ingest_subtype_registry() {
+    static $registry = array();
+    return $registry;
+}
+
+function core_engine_register_ingest_subtype($subtype, callable $handler) {
+    $registry = &core_engine_get_ingest_subtype_registry();
+    $registry[$subtype] = $handler;
+}
+
+function core_engine_get_ingest_subtype_handler($subtype) {
+    $registry = core_engine_get_ingest_subtype_registry();
+    return $registry[$subtype] ?? null;
+}
+
+function core_engine_dispatch_ingest_subtype($subtype, array $payload) {
+    $handler = core_engine_get_ingest_subtype_handler($subtype);
+    if (!$handler) {
+        return false;
+    }
+
+    return (bool) call_user_func($handler, $payload);
+}
+
+/**
  * Normalizes ingest payload without mutating the original array.
  * Contract version: CORE_INGEST_CONTRACT_VERSION.
  *
@@ -99,6 +126,16 @@ function core_engine_action_ingest_event(array $payload) {
  * @return bool True when the ingest event is emitted; false when required fields are missing.
  */
 function core_engine_handle_autowebinar_payload(array $payload) {
+    return core_engine_dispatch_ingest_subtype('autowebinar', $payload);
+}
+
+/**
+ * Orchestrates AutoWebinar ingest payload into canonical events.
+ *
+ * @param array $payload
+ * @return bool True when the ingest event is emitted; false when required fields are missing.
+ */
+function core_engine_orchestrate_autowebinar_payload(array $payload) {
     if (!core_engine_action_ingest_event($payload)) {
         return false;
     }
@@ -121,6 +158,8 @@ function core_engine_handle_autowebinar_payload(array $payload) {
     do_action('core_lead_ingest', $lead_meta);
     return true;
 }
+
+core_engine_register_ingest_subtype('autowebinar', 'core_engine_orchestrate_autowebinar_payload');
 
 /**
  * Canonical filter hooks.
