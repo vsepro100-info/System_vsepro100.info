@@ -6,7 +6,7 @@
 
 ## Канонические события лидов
 - `core_ingest_event`
-- `core_lead_created`
+- `core_lead_created( $lead_id, $payload )` — canonical lead entity created from ingest payload.
 - `core_lead_updated`
 - `core_lead_deleted`
 - `core_lead_merged`

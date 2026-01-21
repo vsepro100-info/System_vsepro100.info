@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Core Engine
  * Description: Технические канонические хуки и заготовки сущностей ядра.
- * Version: 0.1.1
+ * Version: 0.1.2
  * Author: vsepro100.info
  * Author URI: https://vsepro100.info
  */
@@ -155,7 +155,6 @@ function core_engine_orchestrate_autowebinar_payload(array $payload) {
         $lead_meta['ref'] = $payload['ref'];
     }
 
-    do_action('core_lead_created', $lead_meta);
     return true;
 }
 
