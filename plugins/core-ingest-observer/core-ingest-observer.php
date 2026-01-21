@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name: Core Ingest Observer
- * Description: Observer-only diagnostic logger for core_ingest_event.
- * Version: 0.1.0
+ * Description: Технический диагностический логгер для core_ingest_event.
+ * Version: 0.1.1
  * Author: vsepro100.info
  * Author URI: https://vsepro100.info
  */

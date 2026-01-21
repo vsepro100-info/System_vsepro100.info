@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name: Core Engine
- * Description: Canonical hooks and entity placeholders for the core foundation.
- * Version: 0.1.0
+ * Description: Технические канонические хуки и заготовки сущностей ядра.
+ * Version: 0.1.1
  * Author: vsepro100.info
  * Author URI: https://vsepro100.info
  */
