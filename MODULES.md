@@ -8,6 +8,19 @@
 - LIVE вебинары.
 - AUTO вебинары.
 
+## Integrations
+
+### integration-web-form (Integration)
+**Назначение:** базовая интеграция веб-формы с Core Ingest.
+
+**Границы ответственности:**
+- Отрисовка минимальной HTML-формы для сбора name и email.
+- Формирование payload и вызов хука core_ingest_event.
+
+**Не входит в ответственность:**
+- Создание сущностей или lead_meta в Core.
+- Любая бизнес-логика Core или прямые записи в БД.
+
 ### autowebinar-delivery (Service/UI)
 **Назначение:** доставка AutoWebinar как независимого модуля без зависимости от LIVE.
 
