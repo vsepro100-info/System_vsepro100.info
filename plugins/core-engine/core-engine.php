@@ -25,6 +25,16 @@ function core_engine_action_lead_ingest(array $lead_meta) {
 }
 
 /**
+ * Normalizes ingest payload without mutating the original array.
+ *
+ * @param array $payload
+ * @return array
+ */
+function core_engine_normalize_ingest_payload(array $payload) {
+    return array_replace([], $payload);
+}
+
+/**
  * Dispatches the canonical ingest event payload.
  *
  * Payload schema (current source: core_handle_autowebinar_payload):
@@ -38,7 +48,7 @@ function core_engine_action_lead_ingest(array $lead_meta) {
  * - ref (string): Referral/source token, when provided.
  *
  * Invariants:
- * - Payload is an associative array passed through without normalization.
+ * - Payload is shallow-copied without value changes.
  * - Event is emitted only when required fields are present and non-empty.
  * - Field names are stable for current routing targets.
  *
@@ -51,6 +61,7 @@ function core_engine_action_lead_ingest(array $lead_meta) {
  * } $payload
  */
 function core_engine_action_ingest_event(array $payload) {
+    $payload = core_engine_normalize_ingest_payload($payload);
     do_action('core_ingest_event', $payload);
 }
 
