@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name: Core Legacy Event Bridge
- * Description: Связывает устаревшие события WordPress с каноничными событиями ядра.
- * Version: 0.1.0
+ * Description: Технический мост для сопоставления устаревших событий WordPress с каноничными.
+ * Version: 0.1.1
  * Author: vsepro100.info
  * Author URI: https://vsepro100.info
  */

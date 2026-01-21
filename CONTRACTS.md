@@ -4,6 +4,13 @@
 - ref → wh_ref → invited_by.
 - Только одна цепочка, без дублирования полей.
 
+## Канонические события лидов
+- `core_ingest_event`
+- `core_lead_created`
+- `core_lead_updated`
+- `core_lead_deleted`
+- `core_lead_merged`
+
 ## Регистрация
 - /signup/ — единственная точка входа регистрации.
 

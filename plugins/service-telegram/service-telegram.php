@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name: Service Telegram Notifier
- * Description: Отправляет уведомление в Telegram при событии core_ingest_event.
- * Version: 0.1.0
+ * Description: Технический обработчик уведомлений Telegram для core_ingest_event.
+ * Version: 0.1.1
  * Author: vsepro100.info
  * Author URI: https://vsepro100.info
  */

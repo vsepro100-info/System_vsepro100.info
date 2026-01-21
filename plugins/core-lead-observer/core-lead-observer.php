@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name: Core Lead Observer
- * Description: Observer-only diagnostic logger for core_lead_created.
- * Version: 0.1.0
+ * Description: Технический диагностический логгер для core_lead_created.
+ * Version: 0.1.1
  * Author: vsepro100.info
  * Author URI: https://vsepro100.info
  */

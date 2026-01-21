@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name: Core Lead Engine
- * Description: Canonical hooks and entity placeholders for the lead lifecycle foundation.
- * Version: 0.1.0
+ * Description: Технические хуки и заготовки сущностей канонического жизненного цикла лида.
+ * Version: 0.1.1
  * Author: vsepro100.info
  * Author URI: https://vsepro100.info
  */
@@ -17,15 +17,15 @@ function core_lead_engine_action_lead_created(array $lead_payload) {
 }
 
 function core_lead_engine_action_lead_updated($lead_id, $lead_meta = null) {
-    do_action('core_lead_engine_lead_updated', $lead_id, $lead_meta);
+    do_action('core_lead_updated', $lead_id, $lead_meta);
 }
 
 function core_lead_engine_action_lead_deleted($lead_id, $lead_meta = null) {
-    do_action('core_lead_engine_lead_deleted', $lead_id, $lead_meta);
+    do_action('core_lead_deleted', $lead_id, $lead_meta);
 }
 
 function core_lead_engine_action_lead_merged($primary_lead_id, $secondary_lead_id, $lead_meta = null) {
-    do_action('core_lead_engine_lead_merged', $primary_lead_id, $secondary_lead_id, $lead_meta);
+    do_action('core_lead_merged', $primary_lead_id, $secondary_lead_id, $lead_meta);
 }
 
 /**
