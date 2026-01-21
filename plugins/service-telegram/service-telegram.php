@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Service Telegram Notifier
  * Description: Технический обработчик уведомлений Telegram для core_lead_created.
- * Version: 0.1.3
+ * Version: 0.1.4
  * Author: vsepro100.info
  * Author URI: https://vsepro100.info
  */
@@ -35,7 +35,8 @@ function service_telegram_handle_lead_created(int $lead_id, array $payload) {
         $created_at_meta = get_post_meta($lead_id, 'lead_created_at', true);
     }
 
-    $created_at = $created_at_meta !== '' ? $created_at_meta : time();
+    $created_at = $created_at_meta !== '' ? (int) $created_at_meta : time();
+    $created_at_formatted = wp_date('d.m.Y H:i', $created_at, wp_timezone());
 
     $message_lines = [
         'Новый лид с формы:',
@@ -43,7 +44,7 @@ function service_telegram_handle_lead_created(int $lead_id, array $payload) {
         "Источник: {$source}",
         "Имя: {$name}",
         "Email: {$email}",
-        "Время создания: {$created_at}",
+        "Время создания: {$created_at_formatted}",
     ];
 
     $message = implode("\n", $message_lines);
