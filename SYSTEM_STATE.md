@@ -6,6 +6,7 @@
 - LIVE вебинар существует.
 - AUTO вебинар планируется.
 - Ingest entry: Web Form → core_ingest_event.
+- Scenario: New web_form lead → Telegram notify.
 
 ## Lead basic metrics (MVP)
 - lead_source: источник лида из payload.source (если доступен).
