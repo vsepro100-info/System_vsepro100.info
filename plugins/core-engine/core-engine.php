@@ -41,6 +41,20 @@ function core_engine_normalize_ingest_payload(array $payload) {
 }
 
 /**
+ * Checks required ingest payload fields.
+ * Contract version: CORE_INGEST_CONTRACT_VERSION.
+ *
+ * @param array $payload
+ * @return bool
+ */
+function core_engine_ingest_payload_has_required_fields(array $payload) {
+    $webinar_id = $payload['webinar_id'] ?? null;
+    $entry_timestamp = $payload['entry_timestamp'] ?? null;
+
+    return !empty($webinar_id) && !empty($entry_timestamp);
+}
+
+/**
  * Dispatches the canonical ingest event payload.
  * Contract version: CORE_INGEST_CONTRACT_VERSION.
  *
@@ -66,10 +80,16 @@ function core_engine_normalize_ingest_payload(array $payload) {
  *     ip?: string|null,
  *     ref?: string
  * } $payload
+ * @return bool True when the event is emitted; false when required fields are missing.
  */
 function core_engine_action_ingest_event(array $payload) {
+    if (!core_engine_ingest_payload_has_required_fields($payload)) {
+        return false;
+    }
+
     $payload = core_engine_normalize_ingest_payload($payload);
     do_action('core_ingest_event', $payload);
+    return true;
 }
 
 /**
