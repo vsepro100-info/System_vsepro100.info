@@ -9,12 +9,15 @@
 
 defined('ABSPATH') || exit;
 
+// Legacy adapter – delegates to Core Engine. No logic here.
 add_action('wp_login', function ($user_login, $user) {
     do_action('core_user_login', $user->ID, $user);
 }, 10, 2);
 
+// Legacy adapter – delegates to Core Engine. No logic here.
 add_action('user_register', function ($user_id) {
     do_action('core_user_registered', $user_id);
 });
 
+// Legacy adapter – delegates to Core Engine. No logic here.
 add_action('autowebinar_delivery_payload', 'core_engine_orchestrate_autowebinar_payload', 10, 1);
