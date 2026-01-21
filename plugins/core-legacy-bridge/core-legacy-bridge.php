@@ -20,14 +20,12 @@ add_action('user_register', function ($user_id) {
 add_action('autowebinar_delivery_payload', 'core_handle_autowebinar_payload', 10, 1);
 
 function core_handle_autowebinar_payload(array $payload) {
-    $webinar_id = $payload['webinar_id'] ?? null;
-    $entry_timestamp = $payload['entry_timestamp'] ?? null;
-
-    if (empty($webinar_id) || empty($entry_timestamp)) {
+    if (!core_engine_action_ingest_event($payload)) {
         return;
     }
 
-    core_engine_action_ingest_event($payload);
+    $webinar_id = $payload['webinar_id'] ?? null;
+    $entry_timestamp = $payload['entry_timestamp'] ?? null;
 
     $lead_meta = array(
         'source' => 'autowebinar',
