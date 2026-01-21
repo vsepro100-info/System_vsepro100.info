@@ -1,8 +1,10 @@
 <?php
 /**
  * Plugin Name: AutoWebinar Delivery
- * Description: Skeleton plugin for AutoWebinar delivery hooks (no logic).
+ * Description: Каркасный плагин для хуков доставки AutoWebinar (без логики).
  * Version: 0.1.0
+ * Author: vsepro100.info
+ * Author URI: https://vsepro100.info
  */
 
 defined('ABSPATH') || exit;

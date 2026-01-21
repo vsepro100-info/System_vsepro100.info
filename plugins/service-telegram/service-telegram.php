@@ -1,8 +1,10 @@
 <?php
 /**
  * Plugin Name: Service Telegram Notifier
- * Description: Sends Telegram notification on core_lead_ingest.
+ * Description: Отправляет уведомление в Telegram при событии core_lead_ingest.
  * Version: 0.1.0
+ * Author: vsepro100.info
+ * Author URI: https://vsepro100.info
  */
 
 defined('ABSPATH') || exit;
