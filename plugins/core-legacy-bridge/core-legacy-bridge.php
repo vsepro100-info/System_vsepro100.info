@@ -17,8 +17,16 @@ add_action('user_register', function ($user_id) {
     do_action('core_user_registered', $user_id);
 });
 
+add_action('plugins_loaded', function () {
+    core_engine_register_ingest_subtype('autowebinar_delivery', 'core_engine_orchestrate_autowebinar_delivery_payload');
+});
+
 add_action('autowebinar_delivery_payload', 'core_handle_autowebinar_payload', 10, 1);
 
 function core_handle_autowebinar_payload(array $payload) {
-    core_engine_handle_autowebinar_payload($payload);
+    core_engine_dispatch_ingest_subtype('autowebinar_delivery', $payload);
+}
+
+function core_engine_orchestrate_autowebinar_delivery_payload(array $payload) {
+    return core_engine_orchestrate_autowebinar_payload($payload);
 }
