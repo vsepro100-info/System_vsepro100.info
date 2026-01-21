@@ -155,7 +155,7 @@ function core_engine_orchestrate_autowebinar_payload(array $payload) {
         $lead_meta['ref'] = $payload['ref'];
     }
 
-    do_action('core_lead_ingest', $lead_meta);
+    do_action('core_lead_created', $lead_meta);
     return true;
 }
 

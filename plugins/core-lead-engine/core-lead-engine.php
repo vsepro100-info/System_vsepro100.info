@@ -12,8 +12,8 @@ defined('ABSPATH') || exit;
 /**
  * Canonical action hooks for the lead lifecycle.
  */
-function core_lead_engine_action_lead_created($lead_id, $lead_meta = null) {
-    do_action('core_lead_engine_lead_created', $lead_id, $lead_meta);
+function core_lead_engine_action_lead_created(array $lead_payload) {
+    do_action('core_lead_created', $lead_payload);
 }
 
 function core_lead_engine_action_lead_updated($lead_id, $lead_meta = null) {
