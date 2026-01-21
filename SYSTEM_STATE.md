@@ -12,3 +12,6 @@
 - first_touch_at: unix timestamp первого касания (time()).
 - lead_created_at: unix timestamp создания лида (time()).
 - lead_created_via: канал создания лида, фиксированное значение core_ingest.
+
+## Lead entity (canonical)
+- lead_entry: internal-only CPT, создаётся на `core_ingest_event` и используется как канонический lead_id.
