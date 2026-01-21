@@ -9,6 +9,7 @@
 - Scenario: New web_form lead → Telegram notify.
 - Scenario: core_lead_created → scenario_start (welcome) для web_form.
 - Scenario: scenario_start(welcome) → Telegram welcome message.
+- Scenario: scenario_start(welcome) → (delay 10 min) → follow-up Telegram.
 
 ## Lead basic metrics (MVP)
 - lead_source: источник лида из payload.source (если доступен).
