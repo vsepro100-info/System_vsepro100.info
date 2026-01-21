@@ -10,6 +10,11 @@
 defined('ABSPATH') || exit;
 
 /**
+ * Core ingest payload contract version.
+ */
+define('CORE_INGEST_CONTRACT_VERSION', 'v1');
+
+/**
  * Canonical action hooks.
  */
 function core_engine_action_user_registered($user_id, $user = null) {
@@ -26,6 +31,7 @@ function core_engine_action_lead_ingest(array $lead_meta) {
 
 /**
  * Normalizes ingest payload without mutating the original array.
+ * Contract version: CORE_INGEST_CONTRACT_VERSION.
  *
  * @param array $payload
  * @return array
@@ -36,6 +42,7 @@ function core_engine_normalize_ingest_payload(array $payload) {
 
 /**
  * Dispatches the canonical ingest event payload.
+ * Contract version: CORE_INGEST_CONTRACT_VERSION.
  *
  * Payload schema (current source: core_handle_autowebinar_payload):
  * Required fields:
