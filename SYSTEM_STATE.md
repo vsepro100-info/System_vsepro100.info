@@ -5,3 +5,4 @@
 - ref/CRM работают.
 - LIVE вебинар существует.
 - AUTO вебинар планируется.
+- Ingest entry: Web Form → core_ingest_event.
