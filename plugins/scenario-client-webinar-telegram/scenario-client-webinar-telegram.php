@@ -28,11 +28,11 @@ function scenario_client_webinar_telegram_handle_start($scenario, $context) {
 
     $event = $payload['event'] ?? '';
 
-    if ($event !== 'client_webinar_entered') {
+    if ($event !== 'client_webinar_completed') {
         return;
     }
 
-    $message = "Вы подключились к вебинару.\nОставайтесь до конца — в конце будет полезный бонус.";
+    $message = "Вебинар завершён.\nЧтобы получить бонус и продолжить — напишите «СТАРТ» в ответ.";
 
     do_action('telegram_send_message', [
         'text' => $message,
