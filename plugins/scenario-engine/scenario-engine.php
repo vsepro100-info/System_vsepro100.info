@@ -10,9 +10,7 @@
 defined('ABSPATH') || exit;
 
 add_action('core_lead_created', 'scenario_engine_dispatch', 10, 2);
-add_action('client_webinar_entered', 'scenario_engine_dispatch_client_webinar', 10, 1);
 add_action('client_webinar_completed', 'scenario_engine_dispatch_client_webinar', 10, 1);
-add_action('client_webinar_form_submitted', 'scenario_engine_dispatch_client_webinar', 10, 1);
 
 function scenario_engine_dispatch(int $lead_id, array $payload) {
     if (empty($lead_id) || !is_numeric($lead_id)) {
@@ -40,27 +38,17 @@ function scenario_engine_dispatch(int $lead_id, array $payload) {
 }
 
 function scenario_engine_dispatch_client_webinar($ctx) {
-    if (!is_array($ctx)) {
-        return;
-    }
-
-    $event = current_action();
-    $uri = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
-    $trace = function_exists('wp_debug_backtrace_summary')
-        ? wp_debug_backtrace_summary(null, 8, false)
-        : 'no_backtrace';
-
-    error_log('[scenario-engine] webinar_event=' . $event . ' uri=' . $uri . ' trace=' . $trace);
+    $ctx = is_array($ctx) ? $ctx : array();
 
     do_action(
         'scenario_start',
         'client_webinar',
         array(
-            'event' => $event,
-            'lead_id' => (int) ($ctx['lead_id'] ?? 0),
-            'webinar_id' => (string) ($ctx['webinar_id'] ?? ''),
-            'timestamp' => (int) ($ctx['timestamp'] ?? time()),
-            'context' => is_array($ctx) ? $ctx : array(),
+            'event' => 'client_webinar_completed',
+            'lead_id' => $ctx['lead_id'] ?? null,
+            'webinar_id' => $ctx['webinar_id'] ?? null,
+            'timestamp' => $ctx['timestamp'] ?? time(),
+            'context' => $ctx,
         )
     );
 }
