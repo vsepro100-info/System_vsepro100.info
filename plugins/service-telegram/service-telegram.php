@@ -12,10 +12,6 @@ defined('ABSPATH') || exit;
 add_action('core_lead_created', 'service_telegram_handle_lead_created', 10, 2);
 
 function service_telegram_handle_lead_created(int $lead_id, array $payload) {
-    if (!defined('TELEGRAM_BOT_TOKEN') || !defined('TELEGRAM_CHAT_ID')) {
-        return;
-    }
-
     if (empty($payload) || !is_array($payload)) {
         return;
     }
@@ -48,12 +44,8 @@ function service_telegram_handle_lead_created(int $lead_id, array $payload) {
     ];
 
     $message = implode("\n", $message_lines);
-    $url = 'https://api.telegram.org/bot' . TELEGRAM_BOT_TOKEN . '/sendMessage';
 
-    wp_remote_post($url, [
-        'body' => [
-            'chat_id' => TELEGRAM_CHAT_ID,
-            'text' => $message,
-        ],
+    do_action('telegram_send_message', [
+        'text' => $message,
     ]);
 }
