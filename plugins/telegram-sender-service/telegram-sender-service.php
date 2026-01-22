@@ -9,9 +9,10 @@
 
 defined('ABSPATH') || exit;
 
-add_action('telegram_send_message', 'telegram_sender_service_handle_message', 10, 1);
+add_action('telegram_send_message', 'telegram_sender_handle', 10, 1);
 
-function telegram_sender_service_handle_message($payload) {
+function telegram_sender_handle($payload) {
+    error_log('[telegram-sender] action fired');
     if (!is_array($payload)) {
         return;
     }
