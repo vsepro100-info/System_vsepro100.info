@@ -34,19 +34,19 @@ function scenario_client_webinar_telegram_handle_start($scenario, $context) {
     $webinar_id = $context['webinar_id'] ?? null;
     $timestamp = $context['timestamp'] ?? null;
 
-    $lines = ['Client webinar completed.'];
+    $formatted_time = ($timestamp !== null && $timestamp !== '')
+        ? wp_date('d.m.Y H:i', (int) $timestamp)
+        : wp_date('d.m.Y H:i');
+    $lead_label = ($lead_id !== null && $lead_id !== '') ? $lead_id : '—';
+    $webinar_label = ($webinar_id !== null && $webinar_id !== '') ? $webinar_id : '—';
 
-    if ($lead_id !== null && $lead_id !== '') {
-        $lines[] = 'Lead ID: ' . $lead_id;
-    }
-
-    if ($webinar_id !== null && $webinar_id !== '') {
-        $lines[] = 'Webinar ID: ' . $webinar_id;
-    }
-
-    if ($timestamp !== null && $timestamp !== '') {
-        $lines[] = 'Timestamp: ' . $timestamp;
-    }
+    $lines = [
+        '📡 Вебинар завершён',
+        '',
+        '🧑 Лид ID: ' . $lead_label,
+        '🎥 Вебинар: ' . $webinar_label,
+        '🕒 Время: ' . $formatted_time,
+    ];
 
     $meta = [
         'scenario' => 'client_webinar',
