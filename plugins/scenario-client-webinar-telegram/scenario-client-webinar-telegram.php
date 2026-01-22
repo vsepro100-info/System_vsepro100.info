@@ -26,20 +26,43 @@ function scenario_client_webinar_telegram_handle_start($scenario, $context) {
 
     $event = (string)($context['event'] ?? '');
 
-    if ($event === '') {
+    if ($event !== 'client_webinar_completed') {
         return;
     }
 
-    switch ($event) {
-        case 'client_webinar_entered':
-            $message = "Вы подключились к вебинару.\nОставайтесь до конца — в конце будет полезный бонус.";
-            break;
-        case 'client_webinar_completed':
-            $message = "Вебинар завершён.\nЧтобы получить бонус и продолжить — напишите «СТАРТ» в ответ.";
-            break;
-        default:
-            return;
+    $lead_id = $context['lead_id'] ?? null;
+    $webinar_id = $context['webinar_id'] ?? null;
+    $timestamp = $context['timestamp'] ?? null;
+
+    $lines = ['Client webinar completed.'];
+
+    if ($lead_id !== null && $lead_id !== '') {
+        $lines[] = 'Lead ID: ' . $lead_id;
     }
 
-    do_action('telegram_send_message', ['text' => $message]);
+    if ($webinar_id !== null && $webinar_id !== '') {
+        $lines[] = 'Webinar ID: ' . $webinar_id;
+    }
+
+    if ($timestamp !== null && $timestamp !== '') {
+        $lines[] = 'Timestamp: ' . $timestamp;
+    }
+
+    $meta = [
+        'scenario' => 'client_webinar',
+        'event' => 'client_webinar_completed',
+    ];
+
+    if ($webinar_id !== null && $webinar_id !== '') {
+        $meta['webinar_id'] = $webinar_id;
+    }
+
+    if ($lead_id !== null && $lead_id !== '') {
+        $meta['lead_id'] = $lead_id;
+    }
+
+    do_action('telegram_send_message', [
+        'text' => implode("\n", $lines),
+        'meta' => $meta,
+    ]);
 }
