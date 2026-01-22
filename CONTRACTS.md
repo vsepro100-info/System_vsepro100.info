@@ -22,6 +22,17 @@
 - Клиентские сценарии требуют явных событий состояния клиента.
 - Запрещены временные предположения без поведенческого подтверждения.
 
+## Client Webinar State Events (canonical)
+Events:
+- `client_webinar_entered`
+- `client_webinar_completed`
+- `client_webinar_form_submitted`
+
+Minimal payload keys (all optional but normalized when present):
+- `lead_id` (int)
+- `webinar_id` (string)
+- `timestamp` (int, unix)
+
 ## AutoWebinar Runtime Contract
 
 ### Неймспейсы и события
