@@ -17,13 +17,13 @@ defined('ABSPATH') || exit;
 function client_webinar_tracker_v2_get_fingerprint() {
     if (is_user_logged_in()) {
         $user_id = get_current_user_id();
-        return 'user_' . $user_id;
+        return (string) $user_id;
     }
 
     $ip_address = isset($_SERVER['REMOTE_ADDR']) ? (string) $_SERVER['REMOTE_ADDR'] : '';
     $user_agent = isset($_SERVER['HTTP_USER_AGENT']) ? (string) $_SERVER['HTTP_USER_AGENT'] : '';
 
-    return 'anon_' . md5($ip_address . '|' . $user_agent);
+    return md5($ip_address . $user_agent);
 }
 
 /**
@@ -36,25 +36,39 @@ function client_webinar_completed_handler() {
         wp_send_json_error();
     }
 
+    $webinar_id = isset($_POST['webinar_id'])
+        ? (string) sanitize_text_field(wp_unslash($_POST['webinar_id']))
+        : '';
+    $lead_id = isset($_POST['lead_id']) ? absint($_POST['lead_id']) : 0;
     $fingerprint = client_webinar_tracker_v2_get_fingerprint();
-    $key = 'client_webinar_completed_' . $fingerprint;
+    $key = 'client_webinar_completed_' . $fingerprint . '_' . $webinar_id;
 
     if (get_transient($key)) {
-        wp_send_json_success();
+        wp_send_json_success(
+            array(
+                'ok' => true,
+                'deduped' => true,
+            )
+        );
     }
 
     set_transient($key, 1, DAY_IN_SECONDS);
 
-    do_action(
-        'scenario_start',
-        'client_webinar',
-        array(
-            'event' => 'client_webinar_completed',
-            'source' => 'client-webinar-tracker-v2',
-        )
+    $ctx = array(
+        'event' => 'client_webinar_completed',
+        'webinar_id' => $webinar_id,
+        'lead_id' => $lead_id,
+        'timestamp' => time(),
+        'source' => 'client-webinar-tracker-v2',
     );
 
-    wp_send_json_success();
+    do_action('client_webinar_completed', $ctx);
+
+    wp_send_json_success(
+        array(
+            'ok' => true,
+        )
+    );
 }
 
 add_action('wp_ajax_client_webinar_completed', 'client_webinar_completed_handler');
