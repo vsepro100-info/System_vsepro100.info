@@ -9,7 +9,11 @@
 
 defined('ABSPATH') || exit;
 
-add_action('scenario_start', 'scenario_client_webinar_telegram_handle_start', 10, 2);
+static $registered = false;
+if (!$registered) {
+    add_action('scenario_start', 'scenario_client_webinar_telegram_handle_start', 10, 2);
+    $registered = true;
+}
 
 function scenario_client_webinar_telegram_handle_start($scenario, $context) {
     if ($scenario !== 'client_webinar') {
