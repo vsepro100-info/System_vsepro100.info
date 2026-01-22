@@ -16,10 +16,6 @@ function scenario_client_webinar_telegram_handle_start($scenario, $context) {
         return;
     }
 
-    if (!defined('TELEGRAM_BOT_TOKEN') || !defined('TELEGRAM_CHAT_ID')) {
-        return;
-    }
-
     if (!is_array($context)) {
         return;
     }
@@ -37,12 +33,8 @@ function scenario_client_webinar_telegram_handle_start($scenario, $context) {
     }
 
     $message = "Вы подключились к вебинару.\nОставайтесь до конца — в конце будет полезный бонус.";
-    $url = 'https://api.telegram.org/bot' . TELEGRAM_BOT_TOKEN . '/sendMessage';
 
-    wp_remote_post($url, [
-        'body' => [
-            'chat_id' => TELEGRAM_CHAT_ID,
-            'text' => $message,
-        ],
+    do_action('telegram_send_message', [
+        'text' => $message,
     ]);
 }
