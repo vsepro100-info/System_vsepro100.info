@@ -31,7 +31,11 @@ function client_webinar_tracker_v2_get_fingerprint() {
  *
  * @return void
  */
-function client_webinar_tracker_v2_handle_completed() {
+function client_webinar_completed_handler() {
+    if (!isset($_SERVER['REQUEST_METHOD']) || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+        wp_send_json_error();
+    }
+
     $fingerprint = client_webinar_tracker_v2_get_fingerprint();
     $key = 'client_webinar_completed_' . $fingerprint;
 
@@ -53,5 +57,5 @@ function client_webinar_tracker_v2_handle_completed() {
     wp_send_json_success();
 }
 
-add_action('wp_ajax_client_webinar_completed', 'client_webinar_tracker_v2_handle_completed');
-add_action('wp_ajax_nopriv_client_webinar_completed', 'client_webinar_tracker_v2_handle_completed');
+add_action('wp_ajax_client_webinar_completed', 'client_webinar_completed_handler');
+add_action('wp_ajax_nopriv_client_webinar_completed', 'client_webinar_completed_handler');
