@@ -20,21 +20,22 @@ function scenario_client_webinar_telegram_handle_start($scenario, $context) {
         return;
     }
 
-    $payload = $context['payload'] ?? [];
+    $event = (string)($context['event'] ?? '');
 
-    if (!is_array($payload)) {
-        $payload = [];
-    }
-
-    $event = $payload['event'] ?? '';
-
-    if ($event !== 'client_webinar_completed') {
+    if ($event === '') {
         return;
     }
 
-    $message = "Вебинар завершён.\nЧтобы получить бонус и продолжить — напишите «СТАРТ» в ответ.";
+    switch ($event) {
+        case 'client_webinar_entered':
+            $message = "Вы подключились к вебинару.\nОставайтесь до конца — в конце будет полезный бонус.";
+            break;
+        case 'client_webinar_completed':
+            $message = "Вебинар завершён.\nЧтобы получить бонус и продолжить — напишите «СТАРТ» в ответ.";
+            break;
+        default:
+            return;
+    }
 
-    do_action('telegram_send_message', [
-        'text' => $message,
-    ]);
+    do_action('telegram_send_message', ['text' => $message]);
 }
