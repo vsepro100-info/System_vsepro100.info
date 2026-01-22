@@ -45,6 +45,12 @@ function scenario_engine_dispatch_client_webinar($ctx) {
     }
 
     $event = current_action();
+    $uri = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
+    $trace = function_exists('wp_debug_backtrace_summary')
+        ? wp_debug_backtrace_summary(null, 8, false)
+        : 'no_backtrace';
+
+    error_log('[scenario-engine] webinar_event=' . $event . ' uri=' . $uri . ' trace=' . $trace);
 
     do_action(
         'scenario_start',
