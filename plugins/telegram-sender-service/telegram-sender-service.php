@@ -40,10 +40,21 @@ function telegram_sender_handle($payload) {
 
     $url = 'https://api.telegram.org/bot' . TELEGRAM_BOT_TOKEN . '/sendMessage';
 
-    wp_remote_post($url, [
+    $response = wp_remote_post($url, [
         'body' => [
             'chat_id' => $chat_id,
             'text' => $text,
         ],
     ]);
+
+    error_log('[telegram-sender] request_url: ' . $url);
+    error_log('[telegram-sender] is_wp_error: ' . (is_wp_error($response) ? '1' : '0'));
+    error_log('[telegram-sender] http_response_code: ' . wp_remote_retrieve_response_code($response));
+
+    $response_body = wp_remote_retrieve_body($response);
+    error_log('[telegram-sender] http_body: ' . trim((string) $response_body));
+
+    if (is_wp_error($response)) {
+        error_log('[telegram-sender] wp_error: ' . $response->get_error_message());
+    }
 }
