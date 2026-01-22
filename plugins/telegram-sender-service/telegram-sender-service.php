@@ -12,7 +12,6 @@ defined('ABSPATH') || exit;
 add_action('telegram_send_message', 'telegram_sender_handle', 10, 1);
 
 function telegram_sender_handle($payload) {
-    error_log('[telegram-sender] action fired');
     if (!is_array($payload)) {
         return;
     }
@@ -46,15 +45,4 @@ function telegram_sender_handle($payload) {
             'text' => $text,
         ],
     ]);
-
-    error_log('[telegram-sender] request_url: ' . $url);
-    error_log('[telegram-sender] is_wp_error: ' . (is_wp_error($response) ? '1' : '0'));
-    error_log('[telegram-sender] http_response_code: ' . wp_remote_retrieve_response_code($response));
-
-    $response_body = wp_remote_retrieve_body($response);
-    error_log('[telegram-sender] http_body: ' . trim((string) $response_body));
-
-    if (is_wp_error($response)) {
-        error_log('[telegram-sender] wp_error: ' . $response->get_error_message());
-    }
 }
