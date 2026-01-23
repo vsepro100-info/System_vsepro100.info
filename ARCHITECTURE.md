@@ -7,6 +7,16 @@
 - Канонический жизненный цикл лидов использует только `core_ingest_event` и события `core_lead_*`.
 - Каноническая сущность лида: `lead_entry` (internal-only CPT).
 
+## Pre-Dialog Behavioral Signals
+- Auto-detected country is allowed as a context signal.
+- Allowed sources for auto-detected country: IP, timezone, locale.
+- Country-level only; city or precise location is explicitly forbidden.
+- Priority: self-reported country overrides auto-detected country.
+- Notes:
+  - Used for chat flags.
+  - Used for CRM context.
+  - No interpretations are allowed.
+
 ## Legacy Runtime
 - Legacy Runtime (vsepro100.info) не переносим.
 - Используем его как эталон поведения и валидации решений.
