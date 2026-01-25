@@ -133,12 +133,7 @@ function client_webinar_action_consumer_mark_processed(array $action, array $con
     }
 
     $key = 'client_webinar_action_' . $fingerprint;
-    if (get_transient($key)) {
-        return false;
-    }
-
-    set_transient($key, 1, DAY_IN_SECONDS);
-    return true;
+    return add_option($key, 1, '', false);
 }
 
 function client_webinar_action_consumer_fingerprint(array $action, array $context, $identity) {
