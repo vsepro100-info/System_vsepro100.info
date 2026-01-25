@@ -36,4 +36,5 @@
 
 ## Документация / архитектура / состояние
 - WEBINAR_ARCHITECTURE.md — статус: активен/утвержден.
+- CLIENT_WEBINAR_EVENTS.md — статус: активен / утверждён.
 - CLIENT_WEBINAR_SCENARIOS.md — статус: активен / утверждён.
