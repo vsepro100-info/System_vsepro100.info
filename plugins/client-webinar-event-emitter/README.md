@@ -4,7 +4,7 @@
 Плагин получает **только** сырые клиентские сигналы вебинара и эмитит допустимые канонические события из контракта. Взаимодействие исключительно через hooks, без UI, таймеров и сценарной логики.
 
 ## Область ответственности (scope)
-- Подписка на сырые сигналы (например, `client-webinar-tracker-v2`).
+- Подписка на сырые сигналы (например, `client-webinar-tracker`).
 - Приведение данных к каноническим событиям `webinar_*` и `post_webinar_form_submitted`.
 - Идемпотентность эмиссии канонических событий.
 - Эмиссия через hooks без прямых зависимостей от других плагинов.
@@ -17,7 +17,7 @@
 - Партнёрская логика.
 
 ## Поддерживаемые источники (MVP)
-- `client-webinar-tracker-v2`
+- `client-webinar-tracker`
   - сырое событие: `client_webinar_completed`
   - каноническое событие: `webinar_completed`
 
@@ -27,6 +27,6 @@
 ## Соответствие архитектурным документам
 | Код/раздел | Документ | Назначение |
 | --- | --- | --- |
-| Подписка на `client_webinar_completed` | `CLIENT_WEBINAR_EVENT_EMITTERS.md` | Разрешённый эмиттер `client-webinar-tracker-v2`. |
+| Подписка на `client_webinar_completed` | `CLIENT_WEBINAR_EVENT_EMITTERS.md` | Разрешённый эмиттер `client-webinar-tracker`. |
 | Эмиссия `webinar_completed` | `CLIENT_WEBINAR_EVENTS.md` | Каноническое событие и допустимый payload. |
 | Hooks‑взаимодействие и отсутствие UI/таймеров | `ARCHITECTURE.md` | Принцип взаимодействия через hooks. |

@@ -21,7 +21,7 @@
 - lead_entry: internal-only CPT, создаётся на `core_ingest_event` и используется как канонический lead_id.
 
 ## События клиентского вебинара (MVP)
-- Эмиссия событий сервиса client-webinar-tracker-v2 только через do_action.
+- Эмиссия событий сервиса client-webinar-tracker только через do_action.
 - События: client_webinar_entered, client_webinar_completed, client_webinar_form_submitted.
 - Минимальный контекст: lead_id (если доступен), webinar_id (string), timestamp.
 
