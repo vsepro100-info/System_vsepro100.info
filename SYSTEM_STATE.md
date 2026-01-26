@@ -22,10 +22,16 @@
 
 ## События клиентского вебинара (MVP)
 - Эмиссия событий сервиса client-webinar-tracker-v2 только через do_action.
-- События: client_webinar_entered, client_webinar_completed, client_webinar_form_submitted.
+- События (реально реализовано): client_webinar_completed.
 - Минимальный контекст: lead_id (если доступен), webinar_id (string), timestamp.
 
-## Сценарии клиентского вебинара (концептуально / ещё не реализовано)
+## События клиентского вебинара (запланировано / не реализовано)
+- client_webinar_registered.
+- client_webinar_entered.
+- client_webinar_left.
+- client_webinar_form_submitted.
+
+## Сценарии клиентского вебинара (запланировано / не реализовано)
 Лид зарегистрирован
  → Сценарии клиентского вебинара
    → Напоминания перед вебинаром (условно)
@@ -36,8 +42,8 @@
 
 ## Документация / архитектура / состояние
 - WEBINAR_ARCHITECTURE.md — статус: активен/утвержден.
-- CLIENT_WEBINAR_ACTION_CONSUMERS.md — статус: активен / утверждён.
-- CLIENT_WEBINAR_EVENTS.md — статус: активен / утверждён.
-- CLIENT_WEBINAR_EVENT_EMITTERS.md — статус: активен / утверждён.
-- CLIENT_WEBINAR_SCENARIOS.md — статус: активен / утверждён.
-- CLIENT_WEBINAR_SCENARIO_SERVICE.md — статус: активен / утверждён.
+- CLIENT_WEBINAR_ACTION_CONSUMERS.md — статус: требует актуализации (вебинарные события частично запланированы).
+- CLIENT_WEBINAR_EVENTS.md — статус: требует актуализации (канонические события частично запланированы).
+- CLIENT_WEBINAR_EVENT_EMITTERS.md — статус: требует актуализации (реально реализован только client_webinar_completed).
+- CLIENT_WEBINAR_SCENARIOS.md — статус: требует актуализации (слой сценариев не реализован).
+- CLIENT_WEBINAR_SCENARIO_SERVICE.md — статус: требует актуализации (слой сценариев не реализован).
