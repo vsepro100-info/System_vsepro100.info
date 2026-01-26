@@ -1,8 +1,8 @@
 <?php
 /**
- * Plugin Name: Client Webinar Tracker v2
+ * Plugin Name: Client Webinar Tracker
  * Description: Безопасный сервисный трекер клиентских событий вебинара (только эмиссия событий).
- * Version: 0.1.0
+ * Version: 0.1.1
  * Author: vsepro100.info
  * Author URI: https://vsepro100.info
  */
@@ -14,7 +14,7 @@ defined('ABSPATH') || exit;
  *
  * @return string
  */
-function client_webinar_tracker_v2_get_fingerprint() {
+function client_webinar_tracker_get_fingerprint() {
     if (is_user_logged_in()) {
         $user_id = get_current_user_id();
         return (string) $user_id;
@@ -40,7 +40,7 @@ function client_webinar_completed_handler() {
         ? (string) sanitize_text_field(wp_unslash($_POST['webinar_id']))
         : '';
     $lead_id = isset($_POST['lead_id']) ? absint($_POST['lead_id']) : 0;
-    $fingerprint = client_webinar_tracker_v2_get_fingerprint();
+    $fingerprint = client_webinar_tracker_get_fingerprint();
     $key = 'client_webinar_completed_' . $fingerprint . '_' . $webinar_id;
 
     if (get_transient($key)) {
@@ -59,7 +59,7 @@ function client_webinar_completed_handler() {
         'webinar_id' => $webinar_id,
         'lead_id' => $lead_id,
         'timestamp' => time(),
-        'source' => 'client-webinar-tracker-v2',
+        'source' => 'client-webinar-tracker',
     );
 
     do_action('client_webinar_completed', $ctx);

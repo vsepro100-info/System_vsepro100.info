@@ -14,7 +14,7 @@ add_action('client_webinar_completed', 'client_webinar_event_emitter_handle_comp
 function client_webinar_event_emitter_handle_completed($context) {
     $context = is_array($context) ? $context : array();
 
-    if (!client_webinar_event_emitter_is_allowed_source($context, 'client-webinar-tracker-v2')) {
+    if (!client_webinar_event_emitter_is_allowed_source($context, 'client-webinar-tracker')) {
         return;
     }
 
@@ -51,7 +51,7 @@ function client_webinar_event_emitter_build_completed_payload(array $context) {
         'webinar_type' => isset($context['webinar_type']) ? (string) $context['webinar_type'] : '',
         'session_id' => isset($context['session_id']) ? (string) $context['session_id'] : '',
         'completed_at' => $timestamp,
-        'source' => 'client-webinar-tracker-v2',
+        'source' => 'client-webinar-tracker',
     );
 
     return apply_filters('client_webinar_event_emitter_payload', $payload, $context);
