@@ -9,6 +9,8 @@
 
 defined('ABSPATH') || exit;
 
+add_action('template_redirect', 'client_webinar_entered_maybe_emit');
+
 /**
  * Формирует отпечаток клиента для защиты от повторной отправки.
  *
@@ -24,6 +26,77 @@ function client_webinar_tracker_get_fingerprint() {
     $user_agent = isset($_SERVER['HTTP_USER_AGENT']) ? (string) $_SERVER['HTTP_USER_AGENT'] : '';
 
     return md5($ip_address . $user_agent);
+}
+
+/**
+ * Определяет контекст входа в вебинар.
+ *
+ * @return array{webinar_id:string,lead_id:int}
+ */
+function client_webinar_tracker_get_entry_context() {
+    $webinar_id = '';
+    $lead_id = 0;
+
+    if (isset($_GET['webinar_id'])) {
+        $webinar_id = (string) sanitize_text_field(wp_unslash($_GET['webinar_id']));
+    } else {
+        $query_webinar_id = get_query_var('webinar_id');
+        if (!empty($query_webinar_id)) {
+            $webinar_id = (string) $query_webinar_id;
+        }
+    }
+
+    if (isset($_GET['lead_id'])) {
+        $lead_id = absint($_GET['lead_id']);
+    } else {
+        $query_lead_id = get_query_var('lead_id');
+        if (!empty($query_lead_id)) {
+            $lead_id = absint($query_lead_id);
+        }
+    }
+
+    return array(
+        'webinar_id' => $webinar_id,
+        'lead_id' => $lead_id,
+    );
+}
+
+/**
+ * Эмитирует факт входа в вебинар при загрузке страницы.
+ *
+ * @return void
+ */
+function client_webinar_entered_maybe_emit() {
+    if (is_admin() || wp_doing_ajax()) {
+        return;
+    }
+
+    $context = client_webinar_tracker_get_entry_context();
+    $webinar_id = $context['webinar_id'];
+    $lead_id = $context['lead_id'];
+
+    if ($webinar_id === '') {
+        return;
+    }
+
+    $fingerprint = client_webinar_tracker_get_fingerprint();
+    $key = 'client_webinar_entered_' . $fingerprint . '_' . $webinar_id;
+
+    if (get_transient($key)) {
+        return;
+    }
+
+    set_transient($key, 1, DAY_IN_SECONDS);
+
+    $ctx = array(
+        'event' => 'client_webinar_entered',
+        'webinar_id' => $webinar_id,
+        'lead_id' => $lead_id,
+        'timestamp' => time(),
+        'source' => 'client-webinar-tracker-v2',
+    );
+
+    do_action('client_webinar_entered', $ctx);
 }
 
 /**
