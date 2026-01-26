@@ -41,4 +41,5 @@ function client_webinar_e2e_test_emitter_handle_entered() {
 }
 
 add_action('wp_ajax___e2e_webinar_entered', 'client_webinar_e2e_test_emitter_handle_entered');
+// Allow unauthenticated E2E verification requests.
 add_action('wp_ajax_nopriv___e2e_webinar_entered', 'client_webinar_e2e_test_emitter_handle_entered');
