@@ -6,16 +6,17 @@
 - Вебинары = надстройка над REF и ролями.
 - Доступы: роли + user_meta.
 
-## 2. Public Webinar Landing
-- URL: `/live/`
+## 2. Public Webinar Landing (FINAL)
+- URL: `/webinars/`
 - Shortcode: `[whieda_webinar_public]`
 - Назначение:
+  - расписание ближайших вебинаров
   - таймер
-  - постер
-  - CTA
-  - `?ref` автоподстановка
+  - CTA “Войти / Зарегистрироваться”
+  - `?ref` автоподстановка (cookies уже есть)
   - OG cache-buster
-- Статус: **WORKING / LEGACY UX**
+- Статус: **WORKING / FINAL UX**
+- Legacy URL: `/live/` (оставлен как совместимость, не использовать в новой навигации)
 
 ## 3. Webinar Admin / Speaker
 - URL: `/admin_webinar/`
@@ -31,8 +32,8 @@
 - Статус: **WORKING / TO MOVE TO PLUGIN**
 
 ## 4. Webinar Room (Core UX)
-- URL: `/live_room/`
-- Shortcode: `[whieda_live_room]`
+- URL: `/account/webinar_room/`
+- Shortcode: `[whieda_live_room]` или `[webinar_room]`
 - Функции:
   - lobby (15 минут)
   - scheduled / live / ended
@@ -46,28 +47,40 @@
 - Статус:
   - **UX READY**
   - **ARCHITECTURE LEGACY**
+- Legacy URL: `/live_room/` (оставлен как совместимость, не использовать в новой навигации)
 
-## 5. Roles & Access (Current State)
-- candidate
-- pending (через user_meta)
-- partner
-- editor (moderator)
-- administrator
-- Зафиксировать:
+## 5. Roles & Access (MVP RULES — FINAL)
+- Guest (неавторизован):
+  - видит публичную страницу `/webinars/`
+  - не попадает в комнату `/account/webinar_room/`
+- Candidate (авторизован, не партнёр):
+  - может войти в вебинар
+  - видит презентацию
+  - имеет CTA “Связаться со спонсором”
+  - не имеет доступа к обучению
+- Partner:
+  - всё выше
+  - + записи вебинаров (позже)
+- Moderator / Editor:
+  - start / stop эфир
+  - управление статусом
+- Примечания:
   - `pending` не обязателен как WP‑роль.
   - анкета = user_meta (`is_approved`, `whieda_login`).
 
-## 6. MVP Access Levels (PLAN)
+## 6. MVP Access Levels (CLOSED)
 - Candidate:
   - презентации
   - публичные вебинары
 - Partner:
-  - обучение
-  - записи
-  - инструменты
+  - обучение (следующий модуль)
+  - записи (следующий модуль)
+  - инструменты (следующий модуль)
 - VIP Partner (future):
   - закрытые вебинары
   - лидерское обучение
+
+> Webinar MVP = **CLOSED** (UX и URL зафиксированы, без архитектурного рефакторинга).
 
 ## 7. Legacy Inventory
 Перечисление найденных сниппетов в текущем репозитории. Без удаления.

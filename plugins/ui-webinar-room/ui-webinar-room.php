@@ -16,6 +16,27 @@ add_shortcode('webinar_room', 'ui_webinar_room_render_shortcode');
  * @return string
  */
 function ui_webinar_room_render_shortcode($atts = array()) {
+    if (!is_user_logged_in()) {
+        $request_uri = isset($_SERVER['REQUEST_URI']) ? wp_unslash($_SERVER['REQUEST_URI']) : '/';
+        $login_url = wp_login_url((string) home_url(add_query_arg(array(), $request_uri)));
+        return '<p class="ui-webinar-room__notice">' .
+            esc_html__('Доступ в вебинарную комнату доступен только для авторизованных пользователей.', 'ui-webinar-room') .
+            ' <a href="' . esc_url($login_url) . '">' .
+            esc_html__('Войти', 'ui-webinar-room') .
+            '</a></p>';
+    }
+
+    $user = wp_get_current_user();
+    $allowed_roles = array('candidate', 'partner', 'editor', 'administrator');
+    $user_roles = is_array($user->roles) ? $user->roles : array();
+    $has_access = array_intersect($allowed_roles, $user_roles);
+
+    if (empty($has_access)) {
+        return '<p class="ui-webinar-room__notice">' .
+            esc_html__('Доступ в вебинарную комнату доступен только для участников.', 'ui-webinar-room') .
+            '</p>';
+    }
+
     $atts = shortcode_atts(
         array(
             'webinar_id' => 'default_webinar',
