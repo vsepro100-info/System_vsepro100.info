@@ -22,7 +22,8 @@
 
 ## События клиентского вебинара (MVP)
 - Эмиссия событий сервиса client-webinar-tracker-v2 только через do_action.
-- События (реально реализовано): client_webinar_completed, client_webinar_entered.
+- Сервисный классификатор посещения: client-webinar-attendance-service (observer-only).
+- События (реально реализовано): client_webinar_completed, client_webinar_entered, client_webinar_attendance_classified.
 - Минимальный контекст: lead_id (если доступен), webinar_id (string), timestamp.
 
 ## События клиентского вебинара (запланировано / не реализовано)
