@@ -14,6 +14,7 @@
 - Service: client_webinar_attendance_classified → post_webinar_route (attended | not_attended).
 - Service: post_webinar_route → Telegram follow-up кандидату (attended | not_attended).
 - Service: post_webinar_route (not_attended) → Telegram предложение записи вебинара.
+- UI: Webinar Room UI (MVP) реализован.
 
 ## Lead basic metrics (MVP)
 - lead_source: источник лида из payload.source (если доступен).
