@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: Client Webinar Tracker
+ * Plugin Name: Client Webinar Tracker v2
  * Description: Безопасный сервисный трекер клиентских событий вебинара (только эмиссия событий).
  * Version: 0.1.1
  * Author: vsepro100.info
@@ -59,7 +59,7 @@ function client_webinar_completed_handler() {
         'webinar_id' => $webinar_id,
         'lead_id' => $lead_id,
         'timestamp' => time(),
-        'source' => 'client-webinar-tracker',
+        'source' => 'client-webinar-tracker-v2',
     );
 
     do_action('client_webinar_completed', $ctx);
