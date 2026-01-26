@@ -10,6 +10,8 @@
 - Scenario: core_lead_created → scenario_start (welcome) для web_form.
 - Scenario: scenario_start(welcome) → Telegram welcome message.
 - Scenario: scenario_start(welcome) → (delay 10 min) → follow-up Telegram.
+- Integration: Client Webinar Tracker v2 принимает inbound (template_redirect/wp_ajax) и эмитит client_webinar_entered/client_webinar_completed.
+- Service: Client Webinar Event Emitter нормализует client_webinar_completed → webinar_completed.
 - Service: client_webinar_attendance_classified → Telegram уведомление партнеру.
 - Service: client_webinar_attendance_classified → post_webinar_route (attended | not_attended).
 - Service: post_webinar_route → Telegram follow-up кандидату (attended | not_attended).
@@ -26,10 +28,11 @@
 - lead_entry: internal-only CPT, создаётся на `core_ingest_event` и используется как канонический lead_id.
 
 ## События клиентского вебинара (MVP)
-- Эмиссия событий сервиса client-webinar-tracker-v2 только через do_action.
-- Сервисный классификатор посещения: client-webinar-attendance-service (observer-only).
-- События (реально реализовано): client_webinar_completed, client_webinar_entered, client_webinar_attendance_classified.
-- Минимальный контекст: lead_id (если доступен), webinar_id (string), timestamp.
+- Inbound (Integration): client-webinar-tracker-v2 эмитит client_webinar_entered/client_webinar_completed через do_action.
+- Нормализация (Service): client-webinar-event-emitter эмитит канонический webinar_completed.
+- Обработчики (Service): attendance/routing/telegram подписываются на webinar_completed и/или client_webinar_attendance_classified.
+- События (реально реализовано): client_webinar_completed, client_webinar_entered, webinar_completed, client_webinar_attendance_classified.
+- Минимальный контекст: lead_id (если доступен), webinar_id (string), timestamp (unix).
 
 ## События клиентского вебинара (запланировано / не реализовано)
 - client_webinar_registered.

@@ -22,8 +22,8 @@
 - Клиентские сценарии требуют явных событий состояния клиента.
 - Запрещены временные предположения без поведенческого подтверждения.
 
-## Client Webinar State Events (canonical)
-Events:
+## Client Webinar State Events (raw/integration)
+Events (inbound, от интеграции):
 - `client_webinar_entered`
 - `client_webinar_completed`
 - `client_webinar_form_submitted`
@@ -32,6 +32,9 @@ Minimal payload keys (all optional but normalized when present):
 - `lead_id` (int)
 - `webinar_id` (string)
 - `timestamp` (int, unix)
+
+## Client Webinar Downstream Event (canonical)
+- `webinar_completed` — каноническое downstream-событие для сервисов (emitter преобразует client_webinar_completed → webinar_completed).
 
 ## AutoWebinar Runtime Contract
 
