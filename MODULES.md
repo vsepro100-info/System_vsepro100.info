@@ -8,6 +8,19 @@
 - LIVE вебинары.
 - AUTO вебинары.
 
+## Client Webinar
+- Webinar Entry UI — UI: входная страница, без логики, только отображение.
+- Webinar Room UI — UI: интерфейс комнаты вебинара, только отображение.
+- Client Webinar Tracker v2 — Integration: inbound (template_redirect/wp_ajax) → client_webinar_entered/client_webinar_completed.
+- Client Webinar Event Emitter — Service: нормализует client_webinar_completed → webinar_completed.
+- Client Webinar Scenario Service — Service: подписка на webinar_completed и запуск сценариев.
+- Client Webinar Attendance Service — Service: классификация посещения → client_webinar_attendance_classified.
+- Client Webinar Attendance Telegram — Service: client_webinar_attendance_classified → уведомление в Telegram.
+- Client Webinar Action Consumer — Service: реагирует на client_webinar_* и сценарные события.
+- Post Webinar Routing Service — Service: client_webinar_attendance_classified → post_webinar_route.
+- Post Webinar Follow-up Telegram — Service: post_webinar_route → follow-up Telegram.
+- Post Webinar Recording Follow-up Telegram — Service: post_webinar_route(not_attended) → Telegram с записью.
+
 ## Integrations
 
 ### integration-web-form (Integration)

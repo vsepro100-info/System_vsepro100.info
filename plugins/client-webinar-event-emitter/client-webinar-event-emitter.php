@@ -65,7 +65,13 @@ function client_webinar_event_emitter_mark_processed($event, array $payload, arr
 
     $key = 'client_webinar_emitter_' . $fingerprint;
 
-    return add_option($key, 1, '', false);
+    if (get_transient($key)) {
+        return false;
+    }
+
+    set_transient($key, 1, DAY_IN_SECONDS);
+
+    return true;
 }
 
 function client_webinar_event_emitter_fingerprint($event, array $payload, array $context) {
