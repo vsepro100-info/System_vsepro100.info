@@ -12,6 +12,7 @@
 - Scenario: scenario_start(welcome) → (delay 10 min) → follow-up Telegram.
 - Service: client_webinar_attendance_classified → Telegram уведомление партнеру.
 - Service: client_webinar_attendance_classified → post_webinar_route (attended | not_attended).
+- Service: post_webinar_route → Telegram follow-up кандидату (attended | not_attended).
 
 ## Lead basic metrics (MVP)
 - lead_source: источник лида из payload.source (если доступен).
