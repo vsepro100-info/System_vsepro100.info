@@ -17,6 +17,7 @@ defined('ABSPATH') || exit;
 function client_webinar_e2e_test_emitter_handle_entered() {
     if (!isset($_SERVER['REQUEST_METHOD']) || $_SERVER['REQUEST_METHOD'] !== 'POST') {
         wp_send_json_error();
+        wp_die();
     }
 
     $context = array(
@@ -36,6 +37,7 @@ function client_webinar_e2e_test_emitter_handle_entered() {
             'ok' => true,
         )
     );
+    wp_die();
 }
 
 add_action('wp_ajax___e2e_webinar_entered', 'client_webinar_e2e_test_emitter_handle_entered');
