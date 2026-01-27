@@ -97,7 +97,10 @@ function ui_webinar_room_render_shortcode($atts = array()) {
     $chat_src = $webinar_data['chat_src'] ?? '';
     $cta_text = $webinar_data['cta_text'] ?? 'Задать вопрос консультанту';
     $cta_link = $webinar_data['cta_link'] ?? '';
+    $cta_visibility = $webinar_data['cta_visibility'] ?? 'hidden';
+    $cta_is_shown = $cta_visibility === 'shown';
     $can_manage = current_user_can('edit_pages');
+    $can_manage_cta = current_user_can('speaker');
     $nonce = wp_create_nonce('core_webinar_control');
 
     ob_start();
@@ -107,6 +110,7 @@ function ui_webinar_room_render_shortcode($atts = array()) {
         data-webinar-id="<?php echo esc_attr((string) ($webinar_data['id'] ?? $webinar_id)); ?>"
         data-status="<?php echo esc_attr($status); ?>"
         data-lead-id="<?php echo esc_attr((string) $lead_id); ?>"
+        data-cta-visibility="<?php echo esc_attr($cta_visibility); ?>"
         data-ajax-url="<?php echo esc_url(admin_url('admin-ajax.php')); ?>"
         data-nonce="<?php echo esc_attr($nonce); ?>"
     >
@@ -127,6 +131,17 @@ function ui_webinar_room_render_shortcode($atts = array()) {
                 </button>
                 <button type="button" class="ui-webinar-room__admin-button" data-action="stop">
                     <?php echo esc_html__('Stop', 'ui-webinar-room'); ?>
+                </button>
+            </div>
+        <?php endif; ?>
+
+        <?php if ($can_manage_cta) : ?>
+            <div class="ui-webinar-room__cta-controls">
+                <button type="button" class="ui-webinar-room__admin-button" data-action="show-cta">
+                    <?php echo esc_html__('Show CTA', 'ui-webinar-room'); ?>
+                </button>
+                <button type="button" class="ui-webinar-room__admin-button" data-action="hide-cta">
+                    <?php echo esc_html__('Hide CTA', 'ui-webinar-room'); ?>
                 </button>
             </div>
         <?php endif; ?>
@@ -163,15 +178,28 @@ function ui_webinar_room_render_shortcode($atts = array()) {
                     <p class="ui-webinar-room__complete-text">
                         <?php echo esc_html__('Вебинар завершён', 'ui-webinar-room'); ?>
                     </p>
-                    <?php if (!empty($cta_link)) : ?>
-                        <a class="ui-webinar-room__button" href="<?php echo esc_url($cta_link); ?>">
-                            <?php echo esc_html($cta_text); ?>
-                        </a>
-                    <?php else : ?>
-                        <button class="ui-webinar-room__button" type="button" data-action="consult">
-                            <?php echo esc_html($cta_text); ?>
-                        </button>
+                    <?php if ($cta_is_shown) : ?>
+                        <?php if (!empty($cta_link)) : ?>
+                            <a class="ui-webinar-room__button" data-cta-button="1" href="<?php echo esc_url($cta_link); ?>">
+                                <?php echo esc_html($cta_text); ?>
+                            </a>
+                        <?php else : ?>
+                            <button class="ui-webinar-room__button" type="button" data-action="consult" data-cta-button="1">
+                                <?php echo esc_html($cta_text); ?>
+                            </button>
+                        <?php endif; ?>
                     <?php endif; ?>
+                    <template class="ui-webinar-room__cta-template">
+                        <?php if (!empty($cta_link)) : ?>
+                            <a class="ui-webinar-room__button" data-cta-button="1" href="<?php echo esc_url($cta_link); ?>">
+                                <?php echo esc_html($cta_text); ?>
+                            </a>
+                        <?php else : ?>
+                            <button class="ui-webinar-room__button" type="button" data-action="consult" data-cta-button="1">
+                                <?php echo esc_html($cta_text); ?>
+                            </button>
+                        <?php endif; ?>
+                    </template>
                 </div>
             </div>
 
@@ -206,6 +234,34 @@ function ui_webinar_room_render_shortcode($atts = array()) {
                 var finishButton = root.querySelector('[data-action="finish"]');
                 var startButton = root.querySelector('[data-action="start"]');
                 var stopButton = root.querySelector('[data-action="stop"]');
+                var showCtaButton = root.querySelector('[data-action="show-cta"]');
+                var hideCtaButton = root.querySelector('[data-action="hide-cta"]');
+                var ctaTemplate = root.querySelector('.ui-webinar-room__cta-template');
+                var ctaContainer = root.querySelector('.ui-webinar-room__complete');
+
+                function getCtaVisibility() {
+                    return root.getAttribute('data-cta-visibility') || 'hidden';
+                }
+
+                function setCtaVisibility(visibility) {
+                    root.setAttribute('data-cta-visibility', visibility);
+                    updateCtaVisibility(visibility);
+                }
+
+                function updateCtaVisibility(visibility) {
+                    if (!ctaContainer) {
+                        return;
+                    }
+
+                    var existing = ctaContainer.querySelector('[data-cta-button="1"]');
+                    if (visibility === 'shown') {
+                        if (!existing && ctaTemplate && 'content' in ctaTemplate) {
+                            ctaContainer.appendChild(ctaTemplate.content.cloneNode(true));
+                        }
+                    } else if (existing) {
+                        existing.remove();
+                    }
+                }
 
                 function showScreen(screenName) {
                     var screens = root.querySelectorAll('[data-screen]');
@@ -291,6 +347,63 @@ function ui_webinar_room_render_shortcode($atts = array()) {
                     }).catch(function() {});
                 }
 
+                function sendCtaVisibility(visibility) {
+                    if (!ajaxUrl || !nonce) {
+                        return;
+                    }
+                    var body = new URLSearchParams();
+                    body.set('action', 'core_webinar_set_cta_visibility');
+                    body.set('nonce', nonce);
+                    body.set('visibility', visibility);
+
+                    fetch(ajaxUrl, {
+                        method: 'POST',
+                        credentials: 'same-origin',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                        },
+                        body: body.toString()
+                    }).then(function(response) {
+                        return response.json();
+                    }).then(function(payload) {
+                        if (!payload || !payload.success) {
+                            return;
+                        }
+                        if (payload.data && payload.data.cta_visibility) {
+                            setCtaVisibility(payload.data.cta_visibility);
+                        }
+                    }).catch(function() {});
+                }
+
+                function pollCtaVisibility() {
+                    if (!ajaxUrl || !nonce) {
+                        return;
+                    }
+                    var body = new URLSearchParams();
+                    body.set('action', 'core_webinar_get_cta_visibility');
+                    body.set('nonce', nonce);
+
+                    fetch(ajaxUrl, {
+                        method: 'POST',
+                        credentials: 'same-origin',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                        },
+                        body: body.toString()
+                    }).then(function(response) {
+                        return response.json();
+                    }).then(function(payload) {
+                        if (!payload || !payload.success) {
+                            return;
+                        }
+                        if (payload.data && payload.data.cta_visibility) {
+                            if (payload.data.cta_visibility !== getCtaVisibility()) {
+                                setCtaVisibility(payload.data.cta_visibility);
+                            }
+                        }
+                    }).catch(function() {});
+                }
+
                 var status = root.getAttribute('data-status') || 'scheduled';
                 if (status === 'live') {
                     showScreen('viewing');
@@ -299,6 +412,8 @@ function ui_webinar_room_render_shortcode($atts = array()) {
                 } else {
                     showScreen('lobby');
                 }
+
+                updateCtaVisibility(getCtaVisibility());
 
                 if (entryButton) {
                     entryButton.addEventListener('click', function() {
@@ -324,6 +439,20 @@ function ui_webinar_room_render_shortcode($atts = array()) {
                         sendControl('core_webinar_stop');
                     });
                 }
+
+                if (showCtaButton) {
+                    showCtaButton.addEventListener('click', function() {
+                        sendCtaVisibility('shown');
+                    });
+                }
+
+                if (hideCtaButton) {
+                    hideCtaButton.addEventListener('click', function() {
+                        sendCtaVisibility('hidden');
+                    });
+                }
+
+                window.setInterval(pollCtaVisibility, 5000);
             });
         })();
     </script>

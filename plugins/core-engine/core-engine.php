@@ -218,6 +218,16 @@ function core_engine_webinar_normalize_stream_type($stream_type) {
     return $stream_type;
 }
 
+function core_engine_webinar_normalize_cta_visibility($visibility) {
+    $visibility = (string) sanitize_key($visibility);
+    $allowed = array('hidden', 'shown');
+    if (!in_array($visibility, $allowed, true)) {
+        return 'hidden';
+    }
+
+    return $visibility;
+}
+
 /**
  * @param array<string, mixed> $payload
  * @return array<string, mixed>
@@ -235,6 +245,7 @@ function core_engine_webinar_normalize_payload(array $payload) {
     $normalized['chat_src'] = isset($payload['chat_src']) ? esc_url_raw($payload['chat_src']) : '';
     $normalized['cta_text'] = isset($payload['cta_text']) ? sanitize_text_field($payload['cta_text']) : '';
     $normalized['cta_link'] = isset($payload['cta_link']) ? esc_url_raw($payload['cta_link']) : '';
+    $normalized['cta_visibility'] = core_engine_webinar_normalize_cta_visibility($payload['cta_visibility'] ?? 'hidden');
 
     if (isset($payload['webinar_id'])) {
         $normalized['webinar_id'] = absint($payload['webinar_id']);
@@ -288,6 +299,7 @@ function core_engine_handle_webinar_upsert(array $payload, &$webinar_id = null) 
     update_post_meta($post_id, core_engine_webinar_meta_key('chat_src'), $payload['chat_src']);
     update_post_meta($post_id, core_engine_webinar_meta_key('cta_text'), $payload['cta_text']);
     update_post_meta($post_id, core_engine_webinar_meta_key('cta_link'), $payload['cta_link']);
+    update_post_meta($post_id, core_engine_webinar_meta_key('cta_visibility'), $payload['cta_visibility']);
 }
 
 add_action('core_webinar_upsert', 'core_engine_handle_webinar_upsert', 10, 2);
@@ -382,6 +394,9 @@ function core_engine_webinar_get_default($webinar_id, $webinar_data = array()) {
         'chat_src' => (string) get_post_meta($webinar_id, core_engine_webinar_meta_key('chat_src'), true),
         'cta_text' => (string) get_post_meta($webinar_id, core_engine_webinar_meta_key('cta_text'), true),
         'cta_link' => (string) get_post_meta($webinar_id, core_engine_webinar_meta_key('cta_link'), true),
+        'cta_visibility' => core_engine_webinar_normalize_cta_visibility(
+            (string) get_post_meta($webinar_id, core_engine_webinar_meta_key('cta_visibility'), true)
+        ),
     );
 }
 
@@ -408,6 +423,28 @@ function core_engine_handle_webinar_set_status($webinar_id, $status, $context = 
 }
 
 add_action('core_webinar_set_status', 'core_engine_handle_webinar_set_status', 10, 3);
+
+/**
+ * @param int $webinar_id
+ * @param string $visibility
+ * @param array<string, mixed>|null $context
+ * @return void
+ */
+function core_engine_handle_webinar_set_cta_visibility($webinar_id, $visibility, $context = null) {
+    $webinar_id = absint($webinar_id);
+    if (!$webinar_id) {
+        return;
+    }
+
+    $visibility = core_engine_webinar_normalize_cta_visibility($visibility);
+    update_post_meta($webinar_id, core_engine_webinar_meta_key('cta_visibility'), $visibility);
+
+    if (!empty($context)) {
+        update_post_meta($webinar_id, core_engine_webinar_meta_key('cta_visibility_context'), wp_json_encode($context));
+    }
+}
+
+add_action('core_webinar_set_cta_visibility', 'core_engine_handle_webinar_set_cta_visibility', 10, 3);
 
 /**
  * Entity placeholders.

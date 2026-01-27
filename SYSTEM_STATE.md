@@ -20,6 +20,7 @@
 - Service: post_webinar_route (not_attended) → Telegram предложение записи вебинара.
 - UI: Webinar Room UI (MVP) реализован.
 - UI: Webinar Public UI и Webinar Room UI используют только Core данные (render-only).
+- CTA: видимость хранится в Core (`cta_visibility`), по умолчанию скрыта и управляется спикером.
 - Webinar MVP = STABLE.
 - Next step: Traffic & Training modules.
 
@@ -37,6 +38,7 @@
   - telegram: внутренний чат выключен, источник истины — внешний чат группы.
 - Запрещены двойные чаты для одного вебинара.
 - Внешние платформы открываются в новой вкладке, страница вебинара остаётся открытой.
+- CTA вебинара — контекстное состояние: `cta_visibility` хранится в Core и изменяется только через `core_webinar_set_cta_visibility` по команде спикера; таймеры/автопоказ запрещены.
 
 ## Lead basic metrics (MVP)
 - lead_source: источник лида из payload.source (если доступен).
