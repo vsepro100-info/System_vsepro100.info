@@ -171,6 +171,7 @@ function ui_webinar_admin_render_shortcode() {
             '</p>';
     }
 
+    $is_admin = current_user_can('manage_options');
     $webinar = ui_webinar_public_get_webinar_data();
     $webinar_id = $webinar['id'] ?? 0;
 
@@ -178,16 +179,22 @@ function ui_webinar_admin_render_shortcode() {
     if ('POST' === $_SERVER['REQUEST_METHOD'] && isset($_POST['ui_webinar_admin_nonce'])) {
         check_admin_referer('ui_webinar_admin_save', 'ui_webinar_admin_nonce');
 
+        $current_status = $webinar['status'] ?? 'scheduled';
+        $current_stream_src = $webinar['stream_src'] ?? '';
+        $current_chat_src = $webinar['chat_src'] ?? '';
+        $current_poster_id = $webinar['poster_id'] ?? 0;
+        $current_poster_url = $webinar['poster_url'] ?? '';
+
         $payload = array(
             'webinar_id' => isset($_POST['webinar_id']) ? absint($_POST['webinar_id']) : 0,
             'title' => sanitize_text_field($_POST['title'] ?? ''),
             'start_datetime' => sanitize_text_field($_POST['start_datetime'] ?? ''),
-            'status' => sanitize_text_field($_POST['status'] ?? 'scheduled'),
-            'poster_id' => absint($_POST['poster_id'] ?? 0),
-            'poster_url' => esc_url_raw($_POST['poster_url'] ?? ''),
+            'status' => $current_status,
+            'poster_id' => absint($_POST['poster_id'] ?? $current_poster_id),
+            'poster_url' => esc_url_raw($_POST['poster_url'] ?? $current_poster_url),
             'stream_type' => sanitize_key($_POST['stream_type'] ?? ''),
-            'stream_src' => esc_url_raw($_POST['stream_src'] ?? ''),
-            'chat_src' => esc_url_raw($_POST['chat_src'] ?? ''),
+            'stream_src' => $is_admin ? esc_url_raw($_POST['stream_src'] ?? $current_stream_src) : $current_stream_src,
+            'chat_src' => $is_admin ? esc_url_raw($_POST['chat_src'] ?? $current_chat_src) : $current_chat_src,
             'cta_text' => sanitize_text_field($_POST['cta_text'] ?? ''),
             'cta_link' => esc_url_raw($_POST['cta_link'] ?? ''),
         );
@@ -202,14 +209,15 @@ function ui_webinar_admin_render_shortcode() {
 
     $title = $webinar['title'] ?? '';
     $start_datetime = $webinar['start_datetime'] ?? '';
-    $status = $webinar['status'] ?? 'scheduled';
     $poster_id = $webinar['poster_id'] ?? 0;
     $poster_url = $webinar['poster_url'] ?? '';
     $stream_type = $webinar['stream_type'] ?? '';
     $stream_src = $webinar['stream_src'] ?? '';
     $chat_src = $webinar['chat_src'] ?? '';
-    $cta_text = $webinar['cta_text'] ?? '';
-    $cta_link = $webinar['cta_link'] ?? '';
+    $cta_text = $webinar['cta_text'] ?? 'Перейти в комнату вебинара';
+    $cta_link = $webinar['cta_link'] ?? home_url('/account/webinar_room/');
+
+    wp_enqueue_media();
 
     ob_start();
     ?>
@@ -233,22 +241,26 @@ function ui_webinar_admin_render_shortcode() {
             </label>
 
             <label class="ui-webinar-admin__field">
-                <span><?php echo esc_html__('Статус', 'ui-webinar-public'); ?></span>
-                <select name="status">
-                    <option value="scheduled" <?php selected($status, 'scheduled'); ?>><?php echo esc_html__('Запланирован', 'ui-webinar-public'); ?></option>
-                    <option value="live" <?php selected($status, 'live'); ?>><?php echo esc_html__('В эфире', 'ui-webinar-public'); ?></option>
-                    <option value="ended" <?php selected($status, 'ended'); ?>><?php echo esc_html__('Завершён', 'ui-webinar-public'); ?></option>
-                </select>
-            </label>
-
-            <label class="ui-webinar-admin__field">
-                <span><?php echo esc_html__('Poster ID', 'ui-webinar-public'); ?></span>
-                <input type="number" name="poster_id" value="<?php echo esc_attr((string) $poster_id); ?>" />
-            </label>
-
-            <label class="ui-webinar-admin__field">
-                <span><?php echo esc_html__('Poster URL', 'ui-webinar-public'); ?></span>
-                <input type="url" name="poster_url" value="<?php echo esc_attr($poster_url); ?>" />
+                <span><?php echo esc_html__('Постер', 'ui-webinar-public'); ?></span>
+                <input type="hidden" name="poster_id" value="<?php echo esc_attr((string) $poster_id); ?>" data-poster-id />
+                <input type="hidden" name="poster_url" value="<?php echo esc_attr($poster_url); ?>" data-poster-url />
+                <div class="ui-webinar-admin__poster">
+                    <div class="ui-webinar-admin__poster-preview" data-poster-preview>
+                        <?php if (!empty($poster_url)) : ?>
+                            <img src="<?php echo esc_url($poster_url); ?>" alt="<?php echo esc_attr__('Постер вебинара', 'ui-webinar-public'); ?>" />
+                        <?php else : ?>
+                            <span><?php echo esc_html__('Постер не выбран', 'ui-webinar-public'); ?></span>
+                        <?php endif; ?>
+                    </div>
+                    <div class="ui-webinar-admin__poster-actions">
+                        <button class="ui-webinar-admin__button" type="button" data-poster-upload>
+                            <?php echo esc_html__('Загрузить постер', 'ui-webinar-public'); ?>
+                        </button>
+                        <button class="ui-webinar-admin__button" type="button" data-poster-clear>
+                            <?php echo esc_html__('Убрать постер', 'ui-webinar-public'); ?>
+                        </button>
+                    </div>
+                </div>
             </label>
 
             <label class="ui-webinar-admin__field">
@@ -262,16 +274,6 @@ function ui_webinar_admin_render_shortcode() {
             </label>
 
             <label class="ui-webinar-admin__field">
-                <span><?php echo esc_html__('Источник стрима', 'ui-webinar-public'); ?></span>
-                <input type="url" name="stream_src" value="<?php echo esc_attr($stream_src); ?>" />
-            </label>
-
-            <label class="ui-webinar-admin__field">
-                <span><?php echo esc_html__('Источник чата', 'ui-webinar-public'); ?></span>
-                <input type="url" name="chat_src" value="<?php echo esc_attr($chat_src); ?>" />
-            </label>
-
-            <label class="ui-webinar-admin__field">
                 <span><?php echo esc_html__('CTA текст', 'ui-webinar-public'); ?></span>
                 <input type="text" name="cta_text" value="<?php echo esc_attr($cta_text); ?>" />
             </label>
@@ -281,11 +283,95 @@ function ui_webinar_admin_render_shortcode() {
                 <input type="url" name="cta_link" value="<?php echo esc_attr($cta_link); ?>" />
             </label>
 
+            <?php if ($is_admin) : ?>
+                <details class="ui-webinar-admin__admin-settings">
+                    <summary class="ui-webinar-admin__admin-summary">
+                        <?php echo esc_html__('⚙️ Admin Settings', 'ui-webinar-public'); ?>
+                    </summary>
+                    <label class="ui-webinar-admin__field">
+                        <span><?php echo esc_html__('Источник стрима (override)', 'ui-webinar-public'); ?></span>
+                        <input type="url" name="stream_src" value="<?php echo esc_attr($stream_src); ?>" />
+                    </label>
+
+                    <label class="ui-webinar-admin__field">
+                        <span><?php echo esc_html__('Источник чата (override)', 'ui-webinar-public'); ?></span>
+                        <input type="url" name="chat_src" value="<?php echo esc_attr($chat_src); ?>" />
+                    </label>
+                </details>
+            <?php endif; ?>
+
             <button class="ui-webinar-admin__button" type="submit">
                 <?php echo esc_html__('Сохранить', 'ui-webinar-public'); ?>
             </button>
         </form>
     </section>
+    <script>
+        (function() {
+            var form = document.querySelector('.ui-webinar-admin__form');
+            if (!form || typeof wp === 'undefined' || !wp.media) {
+                return;
+            }
+
+            var uploadButton = form.querySelector('[data-poster-upload]');
+            var clearButton = form.querySelector('[data-poster-clear]');
+            var posterIdField = form.querySelector('[data-poster-id]');
+            var posterUrlField = form.querySelector('[data-poster-url]');
+            var posterPreview = form.querySelector('[data-poster-preview]');
+
+            function renderPreview(url) {
+                if (!posterPreview) {
+                    return;
+                }
+
+                if (url) {
+                    posterPreview.innerHTML = '<img src="' + url + '" alt="<?php echo esc_js(__('Постер вебинара', 'ui-webinar-public')); ?>">';
+                    return;
+                }
+
+                posterPreview.innerHTML = '<span><?php echo esc_js(__('Постер не выбран', 'ui-webinar-public')); ?></span>';
+            }
+
+            if (uploadButton) {
+                uploadButton.addEventListener('click', function() {
+                    var frame = wp.media({
+                        title: '<?php echo esc_js(__('Выберите постер', 'ui-webinar-public')); ?>',
+                        button: { text: '<?php echo esc_js(__('Использовать постер', 'ui-webinar-public')); ?>' },
+                        multiple: false
+                    });
+
+                    frame.on('select', function() {
+                        var attachment = frame.state().get('selection').first();
+                        if (!attachment) {
+                            return;
+                        }
+
+                        var data = attachment.toJSON();
+                        if (posterIdField) {
+                            posterIdField.value = data.id || '';
+                        }
+                        if (posterUrlField) {
+                            posterUrlField.value = data.url || '';
+                        }
+                        renderPreview(data.url || '');
+                    });
+
+                    frame.open();
+                });
+            }
+
+            if (clearButton) {
+                clearButton.addEventListener('click', function() {
+                    if (posterIdField) {
+                        posterIdField.value = '';
+                    }
+                    if (posterUrlField) {
+                        posterUrlField.value = '';
+                    }
+                    renderPreview('');
+                });
+            }
+        })();
+    </script>
     <?php
 
     return ob_get_clean();
