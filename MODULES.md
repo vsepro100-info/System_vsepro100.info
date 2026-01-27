@@ -7,10 +7,12 @@
 ## Webinars Layer
 - LIVE вебинары.
 - AUTO вебинары.
+- Core Webinar Entity — Core: каноническая сущность вебинара (CPT webinar_event), статус/расписание/источники.
 
 ## Client Webinar
 - Webinar Entry UI — UI: входная страница, без логики, только отображение.
-- Webinar Room UI — UI: интерфейс комнаты вебинара, только отображение.
+- Webinar Room UI — UI: интерфейс комнаты вебинара, только отображение, данные из Core.
+- Webinar Public UI — UI: публичная страница и админ‑форма расписания (сохранение через Core).
 - Client Webinar Tracker v2 — Integration: inbound (template_redirect/wp_ajax) → client_webinar_entered/client_webinar_completed.
 - Client Webinar Event Emitter — Service: нормализует client_webinar_completed → webinar_completed.
 - Client Webinar Scenario Service — Service: подписка на webinar_completed и запуск сценариев.
@@ -33,6 +35,15 @@
 **Не входит в ответственность:**
 - Создание сущностей или lead_meta в Core.
 - Любая бизнес-логика Core или прямые записи в БД.
+
+### client-webinar-control-integration (Integration)
+**Назначение:** старт/стоп вебинара через AJAX и Core hook.
+
+**Границы ответственности:**
+- Только проверка доступа, nonce и вызов `core_webinar_set_status`.
+
+**Не входит в ответственность:**
+- Любая логика UI или хранение состояния.
 
 ### autowebinar-delivery (Service/UI)
 **Назначение:** доставка AutoWebinar как независимого модуля без зависимости от LIVE.

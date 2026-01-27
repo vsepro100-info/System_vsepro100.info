@@ -6,17 +6,20 @@
 - LIVE вебинар существует.
 - AUTO вебинар планируется.
 - Ingest entry: Web Form → core_ingest_event.
+- Core Webinar entity: канонический webinar_event (CPT) с расписанием/статусом.
 - Scenario: New web_form lead → Telegram notify.
 - Scenario: core_lead_created → scenario_start (welcome) для web_form.
 - Scenario: scenario_start(welcome) → Telegram welcome message.
 - Scenario: scenario_start(welcome) → (delay 10 min) → follow-up Telegram.
 - Integration: Client Webinar Tracker v2 принимает inbound (template_redirect/wp_ajax) и эмитит client_webinar_entered/client_webinar_completed.
+- Integration: Client Webinar Control Integration управляет start/stop через core_webinar_set_status.
 - Service: Client Webinar Event Emitter нормализует client_webinar_completed → webinar_completed.
 - Service: client_webinar_attendance_classified → Telegram уведомление партнеру.
 - Service: client_webinar_attendance_classified → post_webinar_route (attended | not_attended).
 - Service: post_webinar_route → Telegram follow-up кандидату (attended | not_attended).
 - Service: post_webinar_route (not_attended) → Telegram предложение записи вебинара.
 - UI: Webinar Room UI (MVP) реализован.
+- UI: Webinar Public UI и Webinar Room UI используют только Core данные (render-only).
 - Webinar MVP = STABLE.
 - Next step: Traffic & Training modules.
 
