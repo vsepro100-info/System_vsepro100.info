@@ -228,9 +228,19 @@ function ui_webinar_room_render_shortcode($atts = array()) {
     $can_manage = current_user_can('edit_pages');
     $can_manage_cta = current_user_can('speaker');
     $rest_nonce = wp_create_nonce('wp_rest');
+    $nonce_handle = 'ui-webinar-room-nonce';
+
+    wp_register_script($nonce_handle, false, array(), null, false);
+    wp_enqueue_script($nonce_handle);
+    wp_add_inline_script(
+        $nonce_handle,
+        'window.webinarRoom = window.webinarRoom || {}; window.webinarRoom.nonce = ' . wp_json_encode($rest_nonce) . ';',
+        'before'
+    );
 
     ob_start();
     ?>
+    <?php wp_print_scripts($nonce_handle); ?>
     <section
         class="ui-webinar-room"
         data-webinar-id="<?php echo esc_attr((string) ($webinar_data['id'] ?? $webinar_id)); ?>"
@@ -356,7 +366,6 @@ function ui_webinar_room_render_shortcode($atts = array()) {
                 var leadId = root.getAttribute('data-lead-id') || '';
                 var ajaxUrl = root.getAttribute('data-ajax-url') || '';
                 var restUrl = root.getAttribute('data-rest-url') || '';
-                var restNonce = root.getAttribute('data-rest-nonce') || '';
 
                 var entryButton = root.querySelector('[data-action="enter"]');
                 var finishButton = root.querySelector('[data-action="finish"]');
@@ -366,6 +375,12 @@ function ui_webinar_room_render_shortcode($atts = array()) {
                 var hideCtaButton = root.querySelector('[data-action="hide-cta"]');
                 var ctaTemplate = root.querySelector('.ui-webinar-room__cta-template');
                 var ctaContainer = root.querySelector('.ui-webinar-room__complete');
+                var webinarRoom = window.webinarRoom || {};
+                var restNonce = root.getAttribute('data-rest-nonce') || '';
+
+                if (!webinarRoom.nonce && restNonce) {
+                    webinarRoom.nonce = restNonce;
+                }
 
                 function getCtaVisibility() {
                     return root.getAttribute('data-cta-visibility') || 'hidden';
@@ -419,7 +434,10 @@ function ui_webinar_room_render_shortcode($atts = array()) {
                             url.searchParams.set('lead_id', leadId);
                         }
                         fetch(url.toString(), {
-                            credentials: 'same-origin'
+                            credentials: 'same-origin',
+                            headers: {
+                                'X-WP-Nonce': webinarRoom.nonce
+                            }
                         }).catch(function() {});
                     } catch (error) {
                     }
@@ -442,7 +460,8 @@ function ui_webinar_room_render_shortcode($atts = array()) {
                         method: 'POST',
                         credentials: 'same-origin',
                         headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                            'X-WP-Nonce': webinarRoom.nonce
                         },
                         body: body.toString()
                     }).catch(function() {});
@@ -487,7 +506,10 @@ function ui_webinar_room_render_shortcode($atts = array()) {
                     }
 
                     fetch(restUrl, {
-                        credentials: 'same-origin'
+                        credentials: 'same-origin',
+                        headers: {
+                            'X-WP-Nonce': webinarRoom.nonce
+                        }
                     }).then(function(response) {
                         if (!response.ok) {
                             return null;
@@ -499,7 +521,7 @@ function ui_webinar_room_render_shortcode($atts = array()) {
                 }
 
                 function sendStateUpdate(payload) {
-                    if (!restUrl || !restNonce) {
+                    if (!restUrl || !webinarRoom.nonce) {
                         return;
                     }
 
@@ -508,7 +530,7 @@ function ui_webinar_room_render_shortcode($atts = array()) {
                         credentials: 'same-origin',
                         headers: {
                             'Content-Type': 'application/json',
-                            'X-WP-Nonce': restNonce
+                            'X-WP-Nonce': webinarRoom.nonce
                         },
                         body: JSON.stringify(payload || {})
                     }).then(function(response) {
