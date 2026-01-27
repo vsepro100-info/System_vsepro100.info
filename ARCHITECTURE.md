@@ -114,6 +114,9 @@
   - Used for CRM context.
   - No interpretations are allowed.
 
+## Webinar Chat Module
+- Внутренний чат комнаты вебинара — отдельный модуль с собственным UI, AJAX и хранением.
+
 ## Legacy Runtime
 - Legacy Runtime (vsepro100.info) не переносим.
 - Используем его как эталон поведения и валидации решений.
