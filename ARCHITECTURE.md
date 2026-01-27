@@ -42,6 +42,12 @@
 - Пользователь никогда не видит два чата для одного вебинара.
 - Внешние платформы открываются в новой вкладке, страница платформы остаётся открытой.
 
+## Канон CTA вебинара (системно утверждено)
+- CTA — контекстный элемент вебинара, не постоянный и не "по времени".
+- Состояние видимости CTA хранится в канонической сущности вебинара (`cta_visibility`).
+- CTA скрыта по умолчанию (`hidden`) и показывается только по прямой команде спикера.
+- Изменение видимости CTA допустимо только через Core hook `core_webinar_set_cta_visibility`.
+
 ## Pre-Dialog Behavioral Signals
 - Auto-detected country is allowed as a context signal.
 - Allowed sources for auto-detected country: IP, timezone, locale.
