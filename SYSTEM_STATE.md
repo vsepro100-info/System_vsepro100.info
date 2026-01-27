@@ -20,6 +20,9 @@
 - Service: post_webinar_route (not_attended) → Telegram предложение записи вебинара.
 - UI: Webinar Room UI (MVP) реализован.
 - UI: Webinar Public UI и Webinar Room UI используют только Core данные (render-only).
+- UI: `/admin_webinar/` по умолчанию открывается в Speaker UI; технические поля спрятаны за admin-настройками (иконка "gear").
+- CTA: вебинар хранит только гостевой CTA (по умолчанию "Забронировать место на вебинар" → `/signup/`).
+- CTA: для авторизованных пользователей UI всегда переопределяет CTA ("Перейти в комнату вебинара" → `/account/webinar_room/`), Core это не хранит.
 - CTA: видимость хранится в Core (`cta_visibility`), по умолчанию скрыта и управляется спикером.
 - Webinar MVP = STABLE.
 - Next step: Traffic & Training modules.
@@ -28,7 +31,9 @@
 - Каноническая иерархия ролей: admin → speaker → leader → partner → candidate.
 - Отдельной роли "moderator" не существует.
 - Роль speaker — системная доверенная роль, не ограниченная вебинарами.
+- Роль speaker назначается через WP Users (не через UI вебинара).
 - Права определяются capabilities, а не введением новых ролей.
+- Права speaker выдаются через набор `webinar_*` capabilities и не зависят от конкретного вебинара.
 - Примеры capabilities для speaker: webinar_manage_chat, webinar_manage_status, approve_users / approve_profiles (опционально).
 - Роль "host / speaker" в вебинаре — это контекст `webinar.speaker_id`, а не отдельная роль.
 - Все пользователи с ролью speaker сохраняют права модерации вне зависимости от `webinar.speaker_id`.
