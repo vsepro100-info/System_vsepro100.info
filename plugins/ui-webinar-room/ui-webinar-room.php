@@ -211,7 +211,7 @@ function ui_webinar_room_render_shortcode($atts = array()) {
                     <?php if ($chat_src) : ?>
                         <iframe title="<?php echo esc_attr__('Чат вебинара', 'ui-webinar-room'); ?>" src="<?php echo esc_url($chat_src); ?>" loading="lazy"></iframe>
                     <?php endif; ?>
-                    <?php echo do_shortcode('[whieda_room_chat]'); ?>
+                    <?php echo do_shortcode('[webinar_room_chat]'); ?>
                 </div>
             </aside>
         </div>

@@ -13,6 +13,9 @@
 - Webinar Entry UI — UI: входная страница, без логики, только отображение.
 - Webinar Room UI — UI: интерфейс комнаты вебинара, только отображение, данные из Core.
 - Webinar Public UI — UI: публичная страница и админ‑форма расписания (сохранение через Core).
+- Webinar Chat — UI/Service: внутренний чат комнаты вебинара (сообщения, модерация, бан).
+  - Shortcodes: `[webinar_room_chat]` (canonical), `[whieda_room_chat]` (legacy alias).
+  - AJAX: webinar_chat_fetch, webinar_chat_send, webinar_chat_moder (legacy aliases whieda_chat_*).
 - Client Webinar Tracker v2 — Integration: inbound (template_redirect/wp_ajax) → client_webinar_entered/client_webinar_completed.
 - Client Webinar Event Emitter — Service: нормализует client_webinar_completed → webinar_completed.
 - Client Webinar Scenario Service — Service: подписка на webinar_completed и запуск сценариев.
