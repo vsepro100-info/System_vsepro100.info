@@ -23,6 +23,21 @@
 - Webinar MVP = STABLE.
 - Next step: Traffic & Training modules.
 
+## Канон ролей, прав и вебинаров (системно утверждено)
+- Каноническая иерархия ролей: admin → speaker → leader → partner → candidate.
+- Отдельной роли "moderator" не существует.
+- Роль speaker — системная доверенная роль, не ограниченная вебинарами.
+- Права определяются capabilities, а не введением новых ролей.
+- Примеры capabilities для speaker: webinar_manage_chat, webinar_manage_status, approve_users / approve_profiles (опционально).
+- Роль "host / speaker" в вебинаре — это контекст `webinar.speaker_id`, а не отдельная роль.
+- Все пользователи с ролью speaker сохраняют права модерации вне зависимости от `webinar.speaker_id`.
+- Владение чатом зависит от `stream_type`:
+  - obs: внутренний чат включён, управляется speaker.
+  - zoom: внутренний чат выключен, источник истины — внешний чат платформы.
+  - telegram: внутренний чат выключен, источник истины — внешний чат группы.
+- Запрещены двойные чаты для одного вебинара.
+- Внешние платформы открываются в новой вкладке, страница вебинара остаётся открытой.
+
 ## Lead basic metrics (MVP)
 - lead_source: источник лида из payload.source (если доступен).
 - first_touch_at: unix timestamp первого касания (time()).
