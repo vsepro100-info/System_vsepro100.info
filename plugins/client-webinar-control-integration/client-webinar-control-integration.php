@@ -17,10 +17,7 @@ define('CLIENT_WEBINAR_CONTROL_SET_CTA_VISIBILITY_ACTION', 'core_webinar_set_cta
 define('CLIENT_WEBINAR_CONTROL_GET_CTA_VISIBILITY_ACTION', 'core_webinar_get_cta_visibility');
 
 function client_webinar_control_integration_register_actions() {
-    add_action('wp_ajax_' . CLIENT_WEBINAR_CONTROL_START_ACTION, 'client_webinar_control_handle_start');
-    add_action('wp_ajax_' . CLIENT_WEBINAR_CONTROL_STOP_ACTION, 'client_webinar_control_handle_stop');
-    add_action('wp_ajax_' . CLIENT_WEBINAR_CONTROL_SET_CTA_VISIBILITY_ACTION, 'client_webinar_control_handle_set_cta_visibility');
-    add_action('wp_ajax_' . CLIENT_WEBINAR_CONTROL_GET_CTA_VISIBILITY_ACTION, 'client_webinar_control_handle_get_cta_visibility');
+    // Admin-ajax handlers for webinar state are deprecated in favor of REST.
 }
 
 add_action('init', 'client_webinar_control_integration_register_actions');

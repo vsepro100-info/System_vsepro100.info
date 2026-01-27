@@ -117,6 +117,10 @@
 ## Webinar Chat Module
 - Внутренний чат комнаты вебинара — отдельный модуль с собственным UI, AJAX и хранением.
 
+## Webinar Room State Sync
+- Realtime UI state in Webinar Room is synchronized exclusively via REST API.
+- admin-ajax is forbidden for webinar UI state.
+
 ## Legacy Runtime
 - Legacy Runtime (vsepro100.info) не переносим.
 - Используем его как эталон поведения и валидации решений.
