@@ -13,7 +13,7 @@
 - [Реестр страниц](PAGES_REGISTRY.md)
 - [Реестр шорткодов](SHORTCODES_REGISTRY.md)
 - [Статус модулей](MODULES_STATUS.md)
-- [Лог решений](DECISIONS_LOG.md)
+- [Лог решений](CANON/DECISIONS_LOG.md)
 - [Известные проблемы](KNOWN_ISSUES.md)
 
 ## Правило источника истины
