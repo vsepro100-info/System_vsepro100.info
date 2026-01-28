@@ -72,4 +72,4 @@ Last updated: 2026-01-28
 
 Связанные документы:
 - [SPEC/WEBINARS/FLOWS](../WEBINARS/FLOWS.md)
-- [CANON/PRINCIPLES](../../CANON/PRINCIPLES.md)
+- [GPT_ARCHITECT_MODE](../../GPT_ARCHITECT_MODE.md)

@@ -25,6 +25,10 @@ System_vsepro100.info — модульная WordPress‑система, где 
   - [ROLES](CANON/ROLES.md)
   - [MODULE_BOUNDARIES](CANON/MODULE_BOUNDARIES.md)
 
+- **PROCESS / MODE (регламенты работы)**
+  - [GPT_ARCHITECT_MODE](GPT_ARCHITECT_MODE.md)
+  - [DOCUMENT_TYPES](DOCUMENT_TYPES.md)
+
 - **SPEC / RUNBOOKS (как действовать)**
   - [WEBINARS/OVERVIEW](SPEC/WEBINARS/OVERVIEW.md)
   - [WEBINARS/PAGES](SPEC/WEBINARS/PAGES.md)
@@ -44,4 +48,4 @@ System_vsepro100.info — модульная WordPress‑система, где 
   - [MIGRATED_NOTES](ARCHIVE/MIGRATED_NOTES.md)
 
 ## Правило канона
-Если факта нет в CANON или SPEC/RUNBOOKS — его не существует в системе.
+Если факта нет в KB — его не существует в системе.
