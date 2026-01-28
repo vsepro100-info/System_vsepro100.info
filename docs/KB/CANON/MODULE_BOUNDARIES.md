@@ -1,7 +1,8 @@
-LEGACY: актуальная книга проекта — /docs/KB/INDEX.md
-Статус: только для чтения.
+Status: CANON
+Owner: Architect
+Last updated: 2026-01-28
 
-# Модули
+# Границы модулей и контракты
 
 ## Core (Legacy)
 - Legacy Runtime (vsepro100.info) как эталон.
@@ -92,3 +93,56 @@ LEGACY: актуальная книга проекта — /docs/KB/INDEX.md
 
 **Не входит в ответственность:**
 - Запуск новых сценариев или изменение логики core/scenario-engine.
+
+## Контракты
+
+### Канонический Referral Context
+- ref → wh_ref → invited_by.
+- Только одна цепочка, без дублирования полей.
+
+### Канонические события лидов
+- `core_ingest_event`
+- `core_lead_created( $lead_id, $payload )` — canonical lead entity created from ingest payload.
+- `core_lead_updated`
+- `core_lead_deleted`
+- `core_lead_merged`
+
+### Регистрация
+- /signup/ — единственная точка входа регистрации.
+
+### Язык пользовательских коммуникаций
+- Все пользовательские уведомления, сообщения, описания плагинов и интерфейсов должны быть на русском языке.
+- Английский язык допускается только для технических идентификаторов и кода.
+
+### Клиентские сценарии вебинара
+- Клиентские сценарии требуют явных событий состояния клиента.
+- Запрещены временные предположения без поведенческого подтверждения.
+
+### Client Webinar State Events (raw/integration)
+Events (inbound, от интеграции):
+- `client_webinar_entered`
+- `client_webinar_completed`
+- `client_webinar_form_submitted`
+
+Minimal payload keys (all optional but normalized when present):
+- `lead_id` (int)
+- `webinar_id` (string)
+- `timestamp` (int, unix)
+
+### Client Webinar Downstream Event (canonical)
+- `webinar_completed` — каноническое downstream-событие для сервисов (emitter преобразует client_webinar_completed → webinar_completed).
+
+### AutoWebinar Runtime Contract (boundary)
+- Полный контракт и таблицы событий: [SPEC/WEBINARS/OVERVIEW](../SPEC/WEBINARS/OVERVIEW.md).
+
+## Статус модулей
+
+Таблица для контроля текущего состояния модулей и места их кода.
+
+| Модуль | Статус | Что уже сделано | Что осталось | Где код |
+| --- | --- | --- | --- | --- |
+| `<модуль>` | `<в работе/готов/ожидает>` | `<кратко>` | `<кратко>` | `<путь>` |
+
+Связанные документы:
+- [CANON/ARCHITECTURE](ARCHITECTURE.md)
+- [SPEC/WEBINARS/OVERVIEW](../SPEC/WEBINARS/OVERVIEW.md)

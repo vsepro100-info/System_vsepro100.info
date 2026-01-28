@@ -1,5 +1,6 @@
-LEGACY: актуальная книга проекта — /docs/KB/INDEX.md
-Статус: только для чтения.
+Status: CANON
+Owner: Architect
+Last updated: 2026-01-28
 
 # Архитектура
 
@@ -9,31 +10,6 @@ LEGACY: актуальная книга проекта — /docs/KB/INDEX.md
 - Core создаёт канонические сущности и источники правды (ref/CRM).
 - Канонический жизненный цикл лидов использует только `core_ingest_event` и события `core_lead_*`.
 - Каноническая сущность лида: `lead_entry` (internal-only CPT).
-
-## Канон ролей и прав (системный уровень)
-Каноническая иерархия ролей:
-1) admin
-2) speaker (trusted leader, расширенные возможности)
-3) leader
-4) partner
-5) candidate
-
-Правила:
-- Отдельной роли "moderator" не существует.
-- Роль speaker — системная доверенная роль и не ограничена вебинарами.
-- Роль speaker назначается через WP Users (не через UI вебинара).
-- Права управляются capabilities, а не введением новых ролей.
-
-Примеры capabilities для speaker (не исчерпывающий список):
-- webinar_manage_chat
-- webinar_manage_status
-- approve_users / approve_profiles (опционально, флагами)
-- другие доверенные действия в будущем
-
-## Канон вебинарного спикера (контекст, не роль)
-- "Host / speaker" вебинара — это не роль.
-- Это контекст вебинара: `webinar.speaker_id`.
-- Все пользователи с ролью speaker сохраняют права модерации вне зависимости от того, кто указан в `webinar.speaker_id`.
 
 ## Канон владения чатом (недопустимы двойные чаты)
 Источник чата зависит от `stream_type`:
@@ -65,11 +41,11 @@ LEGACY: актуальная книга проекта — /docs/KB/INDEX.md
 - Изменение видимости CTA допустимо только через Core hook `core_webinar_set_cta_visibility`.
 
 ## Webinars & Conversion Canon
-1) Первичная цель вебинара
+1) **Первичная цель вебинара**
 - Вебинар предназначен прежде всего для конверсии, а не обучения.
 - Конверсия = переход к личному контакту с пригласившим / консультантом.
 
-2) Каноническая воронка вебинара
+2) **Каноническая воронка вебинара**
 - Точки входа:
   - внешние лендинги
   - расписание вебинаров
@@ -77,7 +53,7 @@ LEGACY: актуальная книга проекта — /docs/KB/INDEX.md
 - Перед входом в комнату вебинара — обязательный логин.
 - Комната вебинара существует внутри личного кабинета пользователя.
 
-3) Принципы комнаты вебинара
+3) **Принципы комнаты вебинара**
 - Внутри комнаты нет навигационных меню.
 - Порядок фокуса:
   1) видео
@@ -91,21 +67,17 @@ LEGACY: актуальная книга проекта — /docs/KB/INDEX.md
   - ведёт на `/account/contacts/`
   - открывается в новой вкладке
 
-4) Участники и доверие
+4) **Участники и доверие**
 - Единый список участников для всех пользователей.
 - Роли видимы всем (speaker / VIP / partner / guest).
 - Флаги стран видимы всем.
 - Структура рефералов и контактов не раскрывается.
 - Цель: социальное доказательство и ощущение масштаба.
 
-5) Непрерывность конверсии
+5) **Непрерывность конверсии**
 - Пользователь всегда остаётся в контексте личного кабинета.
 - CTA не прерывает поток вебинара.
 - Контакт происходит после вебинара, не во время.
-
-Правила канона:
-- Источник истины — канон, а не история чата.
-- Канон обязателен для всех модулей, связанных с вебинарами.
 
 ## Pre-Dialog Behavioral Signals
 - Auto-detected country is allowed as a context signal.
@@ -128,25 +100,45 @@ LEGACY: актуальная книга проекта — /docs/KB/INDEX.md
 - Legacy Runtime (vsepro100.info) не переносим.
 - Используем его как эталон поведения и валидации решений.
 
-## Сценарии клиентского вебинара
-- Это отдельный класс сценариев.
-- Целевая аудитория: лид (клиент), а не партнёр.
-- Цель: посещаемость вебинара, удержание и действия после вебинара.
-- Основаны на поведенческих событиях, а не только на времени.
+## Текущее состояние системы
+- Продакшен активен.
+- ref/CRM работают.
+- LIVE вебинар существует.
+- AUTO вебинар планируется.
+- Ingest entry: Web Form → core_ingest_event.
+- Core Webinar entity: канонический webinar_event (CPT) с расписанием/статусом.
+- Scenario: New web_form lead → Telegram notify.
+- Scenario: core_lead_created → scenario_start (welcome) для web_form.
+- Scenario: scenario_start(welcome) → Telegram welcome message.
+- Scenario: scenario_start(welcome) → (delay 10 min) → follow-up Telegram.
+- Integration: Client Webinar Tracker v2 принимает inbound (template_redirect/wp_ajax) и эмитит client_webinar_entered/client_webinar_completed.
+- Integration: Client Webinar Control Integration управляет start/stop через core_webinar_set_status.
+- Service: Client Webinar Event Emitter нормализует client_webinar_completed → webinar_completed.
+- Service: client_webinar_attendance_classified → Telegram уведомление партнеру.
+- Service: client_webinar_attendance_classified → post_webinar_route (attended | not_attended).
+- Service: post_webinar_route → Telegram follow-up кандидату (attended | not_attended).
+- Service: post_webinar_route (not_attended) → Telegram предложение записи вебинара.
+- UI: Webinar Room UI (MVP) реализован.
+- UI: Webinar Public UI и Webinar Room UI используют только Core данные (render-only).
+- UI: `/admin_webinar/` по умолчанию открывается в Speaker UI; технические поля спрятаны за admin-настройками (иконка "gear").
+- CTA: вебинар хранит только гостевой CTA (по умолчанию "Забронировать место на вебинар" → `/signup/`).
+- CTA: для авторизованных пользователей UI всегда переопределяет CTA ("Перейти в комнату вебинара" → `/account/webinar_room/`), Core это не хранит.
+- CTA: видимость хранится в Core (`cta_visibility`), по умолчанию скрыта и управляется спикером.
+- Webinar MVP = STABLE.
+- Next step: Traffic & Training modules.
 
-Канонические клиентские события:
-- webinar_registered
-- webinar_entered
-- webinar_left
-- webinar_completed
-- post_webinar_form_submitted
+## Дорожная карта
+- Текущие этапы: поддержка и стабилизация Legacy Runtime.
+- Следующий этап: Webinars Layer.
+- Следующий этап после Webinars Layer: Сценарии клиентского вебинара — поведенческая маршрутизация и напоминания на базе канонических событий вебинара без партнёрских уведомлений.
 
-Требования разделения:
-- Сценарии клиентского вебинара НЕ должны уведомлять партнёров.
-- Партнёрские уведомления обрабатываются отдельно.
+## Запреты (архитектурные)
+- Не трогать /signup/.
+- Не создавать вторую CRM.
+- Не объединять LIVE и AUTO.
 
-Примечание по Webinar Layer:
-- Архитектурно утверждён.
-- Аудит пройден.
-- Реализация нейтральна; на текущем этапе — только события.
-- Ссылка: WEBINAR_ARCHITECTURE.md.
+## Связанные документы
+- [ROLES](ROLES.md)
+- [MODULE_BOUNDARIES](MODULE_BOUNDARIES.md)
+- [SPEC/WEBINARS/OVERVIEW](../SPEC/WEBINARS/OVERVIEW.md)
+- [SPEC/WEBINARS/FLOWS](../SPEC/WEBINARS/FLOWS.md)
