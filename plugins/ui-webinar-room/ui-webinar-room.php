@@ -22,12 +22,12 @@ function ui_webinar_room_register_state_routes() {
             array(
                 'methods' => WP_REST_Server::READABLE,
                 'callback' => 'ui_webinar_room_handle_state_read',
-                'permission_callback' => 'ui_webinar_room_can_access_state',
+                'permission_callback' => 'ui_webinar_room_can_read_state',
             ),
             array(
                 'methods' => WP_REST_Server::CREATABLE,
                 'callback' => 'ui_webinar_room_handle_state_update',
-                'permission_callback' => 'ui_webinar_room_can_access_state',
+                'permission_callback' => 'ui_webinar_room_can_update_state',
             ),
         )
     );
@@ -37,14 +37,21 @@ function ui_webinar_room_register_state_routes() {
  * @param WP_REST_Request $request
  * @return bool
  */
-function ui_webinar_room_can_access_state($request) {
-    if (!is_user_logged_in()) {
+function ui_webinar_room_can_read_state($request) {
+    if (strtoupper($request->get_method()) !== 'GET') {
         return false;
     }
 
-    $method = strtoupper($request->get_method());
-    if ($method === WP_REST_Server::READABLE || $method === 'GET' || $method === 'HEAD') {
-        return true;
+    return is_user_logged_in();
+}
+
+/**
+ * @param WP_REST_Request $request
+ * @return bool
+ */
+function ui_webinar_room_can_update_state($request) {
+    if (strtoupper($request->get_method()) !== 'POST') {
+        return false;
     }
 
     return current_user_can('speaker') || current_user_can('manage_options');
