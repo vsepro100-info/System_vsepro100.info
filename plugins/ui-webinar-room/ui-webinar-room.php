@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Webinar Room UI
  * Description: UI-only shortcode for webinar room with MVP logic.
- * Version: 0.1.0
+ * Version: 0.1.1
  * Author: vsepro100.info
  * Author URI: https://vsepro100.info
  */
@@ -42,7 +42,7 @@ function ui_webinar_room_can_read_state($request) {
         return false;
     }
 
-    return is_user_logged_in();
+    return true;
 }
 
 /**
