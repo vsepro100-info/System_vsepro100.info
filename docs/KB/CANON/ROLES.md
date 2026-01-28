@@ -38,5 +38,5 @@ Last updated: 2026-01-28
 - Тестировщик.
 
 Связанные документы:
-- [GPT_ARCHITECT_MODE](../GPT_ARCHITECT_MODE.md)
+- [ARCHITECT_MODE](../PROCESS/ARCHITECT_MODE.md)
 - [SPEC/WEBINARS/ADMIN](../SPEC/WEBINARS/ADMIN.md)

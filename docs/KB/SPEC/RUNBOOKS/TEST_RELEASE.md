@@ -72,4 +72,4 @@ Last updated: 2026-01-28
 
 Связанные документы:
 - [SPEC/WEBINARS/FLOWS](../WEBINARS/FLOWS.md)
-- [GPT_ARCHITECT_MODE](../../GPT_ARCHITECT_MODE.md)
+- [ARCHITECT_MODE](../../PROCESS/ARCHITECT_MODE.md)
