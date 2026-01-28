@@ -4,10 +4,9 @@ Last updated: 2026-01-28
 
 # ARCHITECT_MODE — операционный регламент архитектора
 
-## Приоритеты и источник истины
-- Этот документ описывает рабочий режим архитектора.
-- Высший приоритет всегда у [CANON/PRINCIPLES](CANON/PRINCIPLES.md).
-- ARCHITECT_MODE не является источником истины и не заменяет KB.
+## Приоритеты
+- Высший приоритет всегда у [CANON/CANON](../CANON/CANON.md).
+- ARCHITECT_MODE описывает рабочий режим архитектора и не является источником истины.
 
 ## Алгоритм работы архитектора
 1) Сверить цель задачи с KB и INDEX.
@@ -49,11 +48,11 @@ Last updated: 2026-01-28
 - Тактические детали и обсуждения в KB не заносятся.
 - Результаты теста фиксируются в задаче + ссылка на запись в KB.
 - Любые новые наблюдения вносятся в:
-  - [CANON/DECISIONS_LOG](CANON/DECISIONS_LOG.md)
-  - [SPEC/RUNBOOKS/TEST_RELEASE](SPEC/RUNBOOKS/TEST_RELEASE.md)
+  - [CANON/DECISIONS_LOG](../CANON/DECISIONS_LOG.md)
+  - [SPEC/RUNBOOKS/TEST_RELEASE](../SPEC/RUNBOOKS/TEST_RELEASE.md)
 
 ## Работа с INDEX
-- Любой новый документ или раздел отражается в [KB/00_INDEX](00_INDEX.md).
+- Любой новый документ или раздел отражается в [KB/00_INDEX](../00_INDEX.md).
 - Если документ перемещён или переименован — обновить INDEX и ссылку в месте вызова.
 
 ## Один шаг тестировщику

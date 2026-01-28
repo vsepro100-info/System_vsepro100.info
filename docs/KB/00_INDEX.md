@@ -19,14 +19,15 @@ System_vsepro100.info — модульная WordPress‑система, где 
 
 ## Навигация по слоям
 - **CANON (истина проекта)**
+  - [CANON](CANON/CANON.md)
   - [ARCHITECTURE](CANON/ARCHITECTURE.md)
   - [PRINCIPLES](CANON/PRINCIPLES.md)
   - [DECISIONS_LOG](CANON/DECISIONS_LOG.md)
   - [ROLES](CANON/ROLES.md)
   - [MODULE_BOUNDARIES](CANON/MODULE_BOUNDARIES.md)
 
-- **PROCESS / MODE (регламенты работы)**
-  - [GPT_ARCHITECT_MODE](GPT_ARCHITECT_MODE.md)
+- **PROCESS (как работает архитектор)**
+  - [ARCHITECT_MODE](PROCESS/ARCHITECT_MODE.md)
   - [DOCUMENT_TYPES](DOCUMENT_TYPES.md)
 
 - **SPEC / RUNBOOKS (как действовать)**
@@ -48,4 +49,6 @@ System_vsepro100.info — модульная WordPress‑система, где 
   - [MIGRATED_NOTES](ARCHIVE/MIGRATED_NOTES.md)
 
 ## Правило канона
-Если факта нет в KB — его не существует в системе.
+- CANON — высший приоритет.
+- PROCESS — регламент работы архитектора (не истина проекта).
+- Если факта нет в KB — его не существует в системе.
