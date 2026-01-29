@@ -26,6 +26,7 @@ System_vsepro100.info — модульная WordPress‑система, где 
   - [ROLES](CANON/ROLES.md)
   - [BOOTSTRAP_CONTRACT](CANON/BOOTSTRAP_CONTRACT.md)
   - [EVENT_HOOK_MAP](CANON/EVENT_HOOK_MAP.md)
+  - [PUBLIC_CONTRACTS](CANON/PUBLIC_CONTRACTS.md)
   - [MODULE_BOUNDARIES](CANON/MODULE_BOUNDARIES.md)
 
 - **PROCESS (как работает архитектор)**
