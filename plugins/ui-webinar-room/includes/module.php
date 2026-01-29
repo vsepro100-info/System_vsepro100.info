@@ -12,10 +12,41 @@ function ui_webinar_room_register_state_routes() {
                 'callback' => 'ui_webinar_room_handle_state_read',
                 'permission_callback' => 'ui_webinar_room_can_read_state',
             ),
+        )
+    );
+
+    register_rest_route(
+        'webinar/v1',
+        '/webinars',
+        array(
             array(
-                'methods' => WP_REST_Server::CREATABLE,
-                'callback' => 'ui_webinar_room_handle_state_update',
-                'permission_callback' => 'ui_webinar_room_can_update_state',
+                'methods' => WP_REST_Server::READABLE,
+                'callback' => 'ui_webinar_room_handle_webinars_list',
+                'permission_callback' => 'ui_webinar_room_can_read_state',
+            ),
+        )
+    );
+
+    register_rest_route(
+        'webinar/v1',
+        '/webinars/(?P<id>\\d+)/state',
+        array(
+            array(
+                'methods' => WP_REST_Server::READABLE,
+                'callback' => 'ui_webinar_room_handle_webinar_state_read',
+                'permission_callback' => 'ui_webinar_room_can_read_state',
+            ),
+        )
+    );
+
+    register_rest_route(
+        'webinar/v1',
+        '/webinars/(?P<id>\\d+)/info',
+        array(
+            array(
+                'methods' => WP_REST_Server::READABLE,
+                'callback' => 'ui_webinar_room_handle_webinar_info_read',
+                'permission_callback' => 'ui_webinar_room_can_read_state',
             ),
         )
     );
@@ -23,26 +54,24 @@ function ui_webinar_room_register_state_routes() {
 
 /**
  * @param WP_REST_Request $request
- * @return bool
+ * @return bool|WP_Error
  */
 function ui_webinar_room_can_read_state($request) {
     if (strtoupper($request->get_method()) !== 'GET') {
-        return false;
+        return new WP_Error('webinar_rest_method_not_allowed', 'Method not allowed', array('status' => 405));
+    }
+
+    if (!is_user_logged_in()) {
+        error_log('ui_webinar_room_rest: denied unauthenticated access');
+        return new WP_Error('webinar_rest_unauthorized', 'Authentication required', array('status' => 401));
+    }
+
+    if (ui_webinar_room_get_actor_role() === '') {
+        error_log('ui_webinar_room_rest: denied access for user ' . (int) get_current_user_id());
+        return new WP_Error('webinar_rest_forbidden', 'Forbidden', array('status' => 403));
     }
 
     return true;
-}
-
-/**
- * @param WP_REST_Request $request
- * @return bool
- */
-function ui_webinar_room_can_update_state($request) {
-    if (strtoupper($request->get_method()) !== 'POST') {
-        return false;
-    }
-
-    return current_user_can('speaker') || current_user_can('manage_options');
 }
 
 function ui_webinar_room_get_current_webinar_id() {
@@ -59,7 +88,12 @@ function ui_webinar_room_get_state_payload($webinar_id) {
     $cta_visibility = $webinar_data['cta_visibility'] ?? 'hidden';
 
     return array(
+        'id' => (int) $webinar_id,
         'status' => $status,
+        'state' => ui_webinar_room_normalize_state($status),
+        'timing' => array(
+            'start_datetime' => $webinar_data['start_datetime'] ?? '',
+        ),
         'cta_visibility' => $cta_visibility,
         'cta_visible' => $cta_visibility === 'shown',
     );
@@ -71,66 +105,32 @@ function ui_webinar_room_handle_state_read() {
         return new WP_Error('no_webinar', 'No webinar found', array('status' => 404));
     }
 
+    $webinar_data = apply_filters('core_webinar_get', (int) $webinar_id, array());
+    $status = $webinar_data['status'] ?? 'scheduled';
+    $role = ui_webinar_room_get_actor_role();
+    $state_error = ui_webinar_room_assert_state_access($role, $status, (int) $webinar_id, 'state');
+    if (is_wp_error($state_error)) {
+        return $state_error;
+    }
+
     return rest_ensure_response(ui_webinar_room_get_state_payload((int) $webinar_id));
 }
 
 /**
- * @param WP_REST_Request $request
- * @return WP_REST_Response|WP_Error
+ * @param string $status
+ * @return string
  */
-function ui_webinar_room_handle_state_update($request) {
-    $webinar_id = ui_webinar_room_get_current_webinar_id();
-    if (empty($webinar_id)) {
-        return new WP_Error('no_webinar', 'No webinar found', array('status' => 404));
+function ui_webinar_room_normalize_state($status) {
+    $normalized = (string) sanitize_key($status);
+    if ($normalized === 'ended') {
+        return 'finished';
     }
 
-    $payload = $request->get_json_params();
-    if (!is_array($payload)) {
-        $payload = $request->get_body_params();
+    if ($normalized === '') {
+        return 'scheduled';
     }
 
-    $status = isset($payload['status']) ? sanitize_key($payload['status']) : '';
-    if ($status !== '') {
-        $allowed_statuses = array('scheduled', 'live', 'ended');
-        if (!in_array($status, $allowed_statuses, true)) {
-            return new WP_Error('invalid_status', 'Invalid status', array('status' => 400));
-        }
-
-        do_action(
-            'core_webinar_set_status',
-            (int) $webinar_id,
-            $status,
-            array(
-                'source' => 'rest',
-                'action' => 'set_status',
-                'user_id' => get_current_user_id(),
-            )
-        );
-    }
-
-    $cta_visibility = isset($payload['cta_visibility']) ? sanitize_key($payload['cta_visibility']) : '';
-    if ($cta_visibility !== '') {
-        if (!in_array($cta_visibility, array('hidden', 'shown'), true)) {
-            return new WP_Error('invalid_cta_visibility', 'Invalid CTA visibility', array('status' => 400));
-        }
-
-        do_action(
-            'core_webinar_set_cta_visibility',
-            (int) $webinar_id,
-            $cta_visibility,
-            array(
-                'source' => 'rest',
-                'action' => 'set_cta_visibility',
-                'user_id' => get_current_user_id(),
-            )
-        );
-    }
-
-    if ($status === '' && $cta_visibility === '') {
-        return new WP_Error('missing_fields', 'No state fields provided', array('status' => 400));
-    }
-
-    return rest_ensure_response(ui_webinar_room_get_state_payload((int) $webinar_id));
+    return $normalized;
 }
 
 function ui_webinar_room_get_webinar_data($webinar_id = null) {
@@ -143,6 +143,156 @@ function ui_webinar_room_get_webinar_data($webinar_id = null) {
     }
 
     return apply_filters('core_webinar_get', (int) $webinar_id, array());
+}
+
+function ui_webinar_room_get_actor_role() {
+    if (!is_user_logged_in()) {
+        return '';
+    }
+
+    if (current_user_can('manage_options') || current_user_can('edit_pages')) {
+        return 'organizer';
+    }
+
+    if (current_user_can('speaker')) {
+        return 'speaker';
+    }
+
+    $user = wp_get_current_user();
+    $roles = is_array($user->roles) ? $user->roles : array();
+    $attendee_roles = array('attendee', 'candidate', 'partner', 'subscriber');
+    if (array_intersect($attendee_roles, $roles)) {
+        return 'attendee';
+    }
+
+    return '';
+}
+
+/**
+ * @param string $role
+ * @param string $status
+ * @param int $webinar_id
+ * @param string $endpoint
+ * @return true|WP_Error
+ */
+function ui_webinar_room_assert_state_access($role, $status, $webinar_id, $endpoint) {
+    $state = ui_webinar_room_normalize_state($status);
+    if ($role === 'attendee' && $state === 'draft') {
+        error_log(
+            'ui_webinar_room_rest: denied attendee access to ' .
+            $endpoint .
+            ' for webinar ' .
+            (int) $webinar_id .
+            ' state ' .
+            $state
+        );
+        return new WP_Error('webinar_rest_forbidden_state', 'Forbidden', array('status' => 403));
+    }
+
+    return true;
+}
+
+/**
+ * @param array<string, mixed> $webinar_data
+ * @return array<string, mixed>
+ */
+function ui_webinar_room_build_webinar_info(array $webinar_data) {
+    $status = $webinar_data['status'] ?? 'scheduled';
+    return array(
+        'id' => isset($webinar_data['id']) ? (int) $webinar_data['id'] : 0,
+        'state' => ui_webinar_room_normalize_state($status),
+        'timing' => array(
+            'start_datetime' => $webinar_data['start_datetime'] ?? '',
+        ),
+    );
+}
+
+/**
+ * @param WP_REST_Request $request
+ * @return WP_REST_Response|WP_Error
+ */
+function ui_webinar_room_handle_webinars_list($request) {
+    $role = ui_webinar_room_get_actor_role();
+    $items = array();
+
+    if (!defined('CORE_ENGINE_WEBINAR_CPT')) {
+        return rest_ensure_response($items);
+    }
+
+    $query = new WP_Query(
+        array(
+            'post_type' => CORE_ENGINE_WEBINAR_CPT,
+            'posts_per_page' => 20,
+            'post_status' => 'publish',
+            'orderby' => 'date',
+            'order' => 'DESC',
+        )
+    );
+
+    if ($query->have_posts()) {
+        foreach ($query->posts as $post) {
+            $webinar_data = apply_filters('core_webinar_get', (int) $post->ID, array());
+            $status = $webinar_data['status'] ?? 'scheduled';
+            $state = ui_webinar_room_normalize_state($status);
+            if ($role === 'attendee' && $state === 'draft') {
+                continue;
+            }
+            $items[] = ui_webinar_room_build_webinar_info($webinar_data);
+        }
+    }
+    wp_reset_postdata();
+
+    return rest_ensure_response($items);
+}
+
+/**
+ * @param WP_REST_Request $request
+ * @return WP_REST_Response|WP_Error
+ */
+function ui_webinar_room_handle_webinar_state_read($request) {
+    $webinar_id = absint($request['id']);
+    if (!$webinar_id) {
+        return new WP_Error('invalid_webinar', 'Invalid webinar id', array('status' => 400));
+    }
+
+    $webinar_data = apply_filters('core_webinar_get', (int) $webinar_id, array());
+    if (empty($webinar_data)) {
+        return new WP_Error('no_webinar', 'No webinar found', array('status' => 404));
+    }
+
+    $role = ui_webinar_room_get_actor_role();
+    $status = $webinar_data['status'] ?? 'scheduled';
+    $state_error = ui_webinar_room_assert_state_access($role, $status, (int) $webinar_id, 'state');
+    if (is_wp_error($state_error)) {
+        return $state_error;
+    }
+
+    return rest_ensure_response(ui_webinar_room_get_state_payload((int) $webinar_id));
+}
+
+/**
+ * @param WP_REST_Request $request
+ * @return WP_REST_Response|WP_Error
+ */
+function ui_webinar_room_handle_webinar_info_read($request) {
+    $webinar_id = absint($request['id']);
+    if (!$webinar_id) {
+        return new WP_Error('invalid_webinar', 'Invalid webinar id', array('status' => 400));
+    }
+
+    $webinar_data = apply_filters('core_webinar_get', (int) $webinar_id, array());
+    if (empty($webinar_data)) {
+        return new WP_Error('no_webinar', 'No webinar found', array('status' => 404));
+    }
+
+    $role = ui_webinar_room_get_actor_role();
+    $status = $webinar_data['status'] ?? 'scheduled';
+    $state_error = ui_webinar_room_assert_state_access($role, $status, (int) $webinar_id, 'info');
+    if (is_wp_error($state_error)) {
+        return $state_error;
+    }
+
+    return rest_ensure_response(ui_webinar_room_build_webinar_info($webinar_data));
 }
 
 function ui_webinar_room_format_status_label($status) {
