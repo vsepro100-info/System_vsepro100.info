@@ -87,6 +87,8 @@ function client_webinar_entered_maybe_emit() {
         'source' => 'client-webinar-tracker-v2',
     );
 
+    error_log('client_webinar_tracker_v2: emit client_webinar_entered for webinar ' . $webinar_id . ' lead ' . $lead_id);
+
     do_action('client_webinar_entered', $ctx);
 }
 
@@ -125,6 +127,8 @@ function client_webinar_completed_handler() {
         'timestamp' => time(),
         'source' => 'client-webinar-tracker-v2',
     );
+
+    error_log('client_webinar_tracker_v2: emit client_webinar_completed for webinar ' . $webinar_id . ' lead ' . $lead_id);
 
     do_action('client_webinar_completed', $ctx);
 

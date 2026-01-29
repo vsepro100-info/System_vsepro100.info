@@ -10,7 +10,8 @@ define('CLIENT_WEBINAR_CONTROL_SET_CTA_VISIBILITY_ACTION', 'core_webinar_set_cta
 define('CLIENT_WEBINAR_CONTROL_GET_CTA_VISIBILITY_ACTION', 'core_webinar_get_cta_visibility');
 
 function client_webinar_control_integration_register_actions() {
-    // Admin-ajax handlers for webinar state are deprecated in favor of REST.
+    add_action('wp_ajax_' . CLIENT_WEBINAR_CONTROL_START_ACTION, 'client_webinar_control_handle_start');
+    add_action('wp_ajax_' . CLIENT_WEBINAR_CONTROL_STOP_ACTION, 'client_webinar_control_handle_stop');
 }
 
 function client_webinar_control_require_permission() {
@@ -44,13 +45,15 @@ function client_webinar_control_handle_start() {
     do_action(
         'core_webinar_set_status',
         (int) $webinar_id,
-        'live',
+        'start',
         array(
             'source' => 'ajax',
             'action' => 'start',
             'user_id' => get_current_user_id(),
         )
     );
+
+    error_log('client_webinar_control_integration: core_webinar_set_status start for webinar ' . (int) $webinar_id);
 
     wp_send_json_success(array('status' => 'live'));
 }
@@ -66,13 +69,15 @@ function client_webinar_control_handle_stop() {
     do_action(
         'core_webinar_set_status',
         (int) $webinar_id,
-        'ended',
+        'stop',
         array(
             'source' => 'ajax',
             'action' => 'stop',
             'user_id' => get_current_user_id(),
         )
     );
+
+    error_log('client_webinar_control_integration: core_webinar_set_status stop for webinar ' . (int) $webinar_id);
 
     wp_send_json_success(array('status' => 'ended'));
 }

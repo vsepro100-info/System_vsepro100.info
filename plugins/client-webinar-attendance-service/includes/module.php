@@ -8,6 +8,8 @@ function client_webinar_attendance_handle_entered($payload) {
         return;
     }
 
+    error_log('client_webinar_attendance_service: entered webinar ' . $context['webinar_id'] . ' lead ' . $context['lead_id']);
+
     $entered_key = client_webinar_attendance_entered_key($context['lead_id'], $context['webinar_id']);
     set_transient($entered_key, $context['timestamp'], DAY_IN_SECONDS);
 }
@@ -17,6 +19,8 @@ function client_webinar_attendance_handle_completed($payload) {
     if ($context['webinar_id'] === '') {
         return;
     }
+
+    error_log('client_webinar_attendance_service: completed webinar ' . $context['webinar_id'] . ' lead ' . $context['lead_id']);
 
     $completed_key = client_webinar_attendance_completed_key($context['lead_id'], $context['webinar_id']);
     set_transient($completed_key, $context['timestamp'], DAY_IN_SECONDS);
@@ -58,6 +62,12 @@ function client_webinar_attendance_emit(array $context, $attended) {
     }
 
     set_transient($classification_key, 1, DAY_IN_SECONDS);
+
+    error_log(
+        'client_webinar_attendance_service: classified attendance ' .
+        ($attended ? 'attended' : 'not_attended') .
+        ' for webinar ' . $context['webinar_id'] . ' lead ' . $context['lead_id']
+    );
 
     do_action(
         'client_webinar_attendance_classified',
