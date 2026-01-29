@@ -13,6 +13,27 @@ Last updated: 2026-01-28
 - AUTO вебинары.
 - Core Webinar Entity — Core: каноническая сущность вебинара (CPT webinar_event), статус/расписание/источники.
 
+### Webinars Plugins — канонический список модулей и entrypoints
+Единый канонический скелет модуля: `plugins/<module>/<module>.php` (загрузчик) → `plugins/<module>/includes/bootstrap.php` (entrypoint).
+
+| Модуль | Плагин | Entrypoint |
+| --- | --- | --- |
+| Webinar Entry UI | `plugins/ui-webinar-entry/` | `plugins/ui-webinar-entry/includes/bootstrap.php` |
+| Webinar Room UI | `plugins/ui-webinar-room/` | `plugins/ui-webinar-room/includes/bootstrap.php` |
+| Webinar Public UI | `plugins/ui-webinar-public/` | `plugins/ui-webinar-public/includes/bootstrap.php` |
+| Webinar Chat | `plugins/webinar-chat/` | `plugins/webinar-chat/includes/bootstrap.php` |
+| Client Webinar Tracker v2 | `plugins/client-webinar-tracker-v2/` | `plugins/client-webinar-tracker-v2/includes/bootstrap.php` |
+| Client Webinar Event Emitter | `plugins/client-webinar-event-emitter/` | `plugins/client-webinar-event-emitter/includes/bootstrap.php` |
+| Client Webinar Scenario Service | `plugins/client-webinar-scenario-service/` | `plugins/client-webinar-scenario-service/includes/bootstrap.php` |
+| Client Webinar Attendance Service | `plugins/client-webinar-attendance-service/` | `plugins/client-webinar-attendance-service/includes/bootstrap.php` |
+| Client Webinar Attendance Telegram | `plugins/client-webinar-attendance-telegram/` | `plugins/client-webinar-attendance-telegram/includes/bootstrap.php` |
+| Client Webinar Action Consumer | `plugins/client-webinar-action-consumer/` | `plugins/client-webinar-action-consumer/includes/bootstrap.php` |
+| Post Webinar Routing Service | `plugins/post-webinar-routing-service/` | `plugins/post-webinar-routing-service/includes/bootstrap.php` |
+| Post Webinar Follow-up Telegram | `plugins/post-webinar-followup-telegram/` | `plugins/post-webinar-followup-telegram/includes/bootstrap.php` |
+| Post Webinar Recording Follow-up Telegram | `plugins/post-webinar-recording-followup-telegram/` | `plugins/post-webinar-recording-followup-telegram/includes/bootstrap.php` |
+| Client Webinar Control Integration | `plugins/client-webinar-control-integration/` | `plugins/client-webinar-control-integration/includes/bootstrap.php` |
+| AutoWebinar Delivery | `plugins/autowebinar-delivery/` | `plugins/autowebinar-delivery/includes/bootstrap.php` |
+
 ## Client Webinar
 - Webinar Entry UI — UI: входная страница, без логики, только отображение.
 - Webinar Room UI — UI: интерфейс комнаты вебинара, только отображение, данные из Core.
