@@ -53,6 +53,30 @@ function client_webinar_tracker_get_entry_context() {
 }
 
 /**
+ * @param string $status
+ * @return string
+ */
+function client_webinar_tracker_normalize_status($status) {
+    $status = (string) sanitize_key($status);
+    if ($status === 'finished') {
+        $status = 'ended';
+    }
+
+    return $status;
+}
+
+/**
+ * @param string $webinar_id
+ * @return string
+ */
+function client_webinar_tracker_get_webinar_status($webinar_id) {
+    $webinar_data = apply_filters('core_webinar_get', (int) $webinar_id, array());
+    $status = isset($webinar_data['status']) ? (string) $webinar_data['status'] : 'scheduled';
+
+    return client_webinar_tracker_normalize_status($status);
+}
+
+/**
  * Эмитирует факт входа в вебинар при загрузке страницы.
  *
  * @return void
@@ -67,6 +91,24 @@ function client_webinar_entered_maybe_emit() {
     $lead_id = $context['lead_id'];
 
     if ($webinar_id === '') {
+        return;
+    }
+
+    if ($lead_id <= 0) {
+        error_log('client_webinar_tracker_v2: denied client_webinar_entered for webinar ' . $webinar_id . ' guest');
+        return;
+    }
+
+    $current_status = client_webinar_tracker_get_webinar_status($webinar_id);
+    if ($current_status !== 'live') {
+        error_log(
+            'client_webinar_tracker_v2: denied client_webinar_entered for webinar ' .
+            $webinar_id .
+            ' status ' .
+            $current_status .
+            ' lead ' .
+            $lead_id
+        );
         return;
     }
 
@@ -106,6 +148,24 @@ function client_webinar_completed_handler() {
         ? (string) sanitize_text_field(wp_unslash($_POST['webinar_id']))
         : '';
     $lead_id = isset($_POST['lead_id']) ? absint($_POST['lead_id']) : 0;
+    if ($lead_id <= 0) {
+        error_log('client_webinar_tracker_v2: denied client_webinar_completed for webinar ' . $webinar_id . ' guest');
+        wp_send_json_error(array('message' => 'forbidden'), 403);
+    }
+
+    $current_status = client_webinar_tracker_get_webinar_status($webinar_id);
+    if ($current_status !== 'ended') {
+        error_log(
+            'client_webinar_tracker_v2: denied client_webinar_completed for webinar ' .
+            $webinar_id .
+            ' status ' .
+            $current_status .
+            ' lead ' .
+            $lead_id
+        );
+        wp_send_json_error(array('message' => 'invalid_state'), 403);
+    }
+
     $fingerprint = client_webinar_tracker_get_fingerprint();
     $key = 'client_webinar_completed_' . $fingerprint . '_' . $webinar_id;
 
