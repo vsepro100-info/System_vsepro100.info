@@ -29,6 +29,7 @@ System_vsepro100.info — модульная WordPress‑система, где 
   - [PERMISSIONS_ROLES](CANON/PERMISSIONS_ROLES.md)
   - [PUBLIC_CONTRACTS](CANON/PUBLIC_CONTRACTS.md)
   - [STATE_MODEL](CANON/STATE_MODEL.md)
+  - [DATA_MODEL](CANON/DATA_MODEL.md)
   - [MODULE_BOUNDARIES](CANON/MODULE_BOUNDARIES.md)
 
 - **PROCESS (как работает архитектор)**
