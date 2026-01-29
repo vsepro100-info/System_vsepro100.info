@@ -117,6 +117,9 @@ Last updated: 2026-01-28
 
 ## Контракты
 
+### Bootstrap Contract (Webinars)
+- Единый контракт bootstrap: [CANON/BOOTSTRAP_CONTRACT](BOOTSTRAP_CONTRACT.md).
+
 ### Канонический Referral Context
 - ref → wh_ref → invited_by.
 - Только одна цепочка, без дублирования полей.

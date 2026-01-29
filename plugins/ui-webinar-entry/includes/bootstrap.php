@@ -2,26 +2,6 @@
 
 defined('ABSPATH') || exit;
 
+require_once __DIR__ . '/module.php';
+
 add_shortcode('webinar_entry', 'ui_webinar_entry_render_shortcode');
-
-function ui_webinar_entry_render_shortcode() {
-    $registration_url = home_url('/signup/');
-
-    ob_start();
-    ?>
-    <section class="webinar-entry">
-        <h2><?php echo esc_html__('Онлайн-вебинар', 'ui-webinar-entry'); ?></h2>
-        <ul>
-            <li><?php echo esc_html__('Что это: обзор ключевой темы в прямом эфире.', 'ui-webinar-entry'); ?></li>
-            <li><?php echo esc_html__('Формат: короткая презентация и ответы на вопросы.', 'ui-webinar-entry'); ?></li>
-            <li><?php echo esc_html__('Для кого: для тех, кто хочет разобраться без лишних деталей.', 'ui-webinar-entry'); ?></li>
-            <li><?php echo esc_html__('Что дальше: получите материалы и ссылку на запись.', 'ui-webinar-entry'); ?></li>
-        </ul>
-        <a class="webinar-entry__cta" href="<?php echo esc_url($registration_url); ?>">
-            <?php echo esc_html__('Перейти к регистрации', 'ui-webinar-entry'); ?>
-        </a>
-    </section>
-    <?php
-
-    return ob_get_clean();
-}

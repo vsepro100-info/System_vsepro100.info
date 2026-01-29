@@ -24,6 +24,7 @@ System_vsepro100.info — модульная WordPress‑система, где 
   - [PRINCIPLES](CANON/PRINCIPLES.md)
   - [DECISIONS_LOG](CANON/DECISIONS_LOG.md)
   - [ROLES](CANON/ROLES.md)
+  - [BOOTSTRAP_CONTRACT](CANON/BOOTSTRAP_CONTRACT.md)
   - [MODULE_BOUNDARIES](CANON/MODULE_BOUNDARIES.md)
 
 - **PROCESS (как работает архитектор)**
