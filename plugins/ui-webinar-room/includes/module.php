@@ -381,6 +381,75 @@ function ui_webinar_room_render_shortcode($atts = array()) {
     ob_start();
     ?>
     <?php wp_print_scripts($nonce_handle); ?>
+    <style>
+        .ui-webinar-room {
+            display: block;
+            margin: 24px 0;
+            font-family: inherit;
+        }
+        .ui-webinar-room__header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        }
+        .ui-webinar-room__status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: rgba(0, 0, 0, 0.06);
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+        }
+        .ui-webinar-room__layout {
+            display: grid;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .ui-webinar-room__state-card {
+            padding: 16px;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.03);
+        }
+        .ui-webinar-room__state-label {
+            margin: 0 0 6px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: rgba(0, 0, 0, 0.6);
+        }
+        .ui-webinar-room__state-value {
+            margin: 0 0 8px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .ui-webinar-room__state-message {
+            margin: 0;
+            color: rgba(0, 0, 0, 0.7);
+        }
+        .ui-webinar-room__placeholder {
+            margin-top: 16px;
+        }
+        .ui-webinar-room__placeholder iframe {
+            width: 100%;
+            min-height: 360px;
+            border: 0;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.04);
+        }
+        .ui-webinar-room__video-label {
+            margin-top: 10px;
+            font-size: 14px;
+            color: rgba(0, 0, 0, 0.7);
+        }
+    </style>
     <section
         class="ui-webinar-room"
         data-webinar-id="<?php echo esc_attr((string) $webinar_id_value); ?>"
@@ -404,10 +473,13 @@ function ui_webinar_room_render_shortcode($atts = array()) {
 
         <div class="ui-webinar-room__layout">
             <div class="ui-webinar-room__main">
-                <p class="ui-webinar-room__state">
-                    <?php echo esc_html__('Текущее состояние:', 'ui-webinar-room'); ?>
-                    <span data-state-value><?php echo esc_html($state); ?></span>
-                </p>
+                <div class="ui-webinar-room__state-card" role="status" aria-live="polite">
+                    <p class="ui-webinar-room__state-label">
+                        <?php echo esc_html__('Состояние комнаты', 'ui-webinar-room'); ?>
+                    </p>
+                    <p class="ui-webinar-room__state-value" data-state-value><?php echo esc_html($state); ?></p>
+                    <p class="ui-webinar-room__state-message" data-state-message></p>
+                </div>
                 <div class="ui-webinar-room__placeholder">
                     <iframe
                         title="<?php echo esc_attr($video_label); ?>"
@@ -435,6 +507,7 @@ function ui_webinar_room_render_shortcode($atts = array()) {
                 var restNonce = root.getAttribute('data-rest-nonce') || '';
                 var statusLabel = root.querySelector('[data-status-label]');
                 var stateValue = root.querySelector('[data-state-value]');
+                var stateMessage = root.querySelector('[data-state-message]');
 
                 if (!webinarRoom.nonce && restNonce) {
                     webinarRoom.nonce = restNonce;
@@ -453,6 +526,51 @@ function ui_webinar_room_render_shortcode($atts = array()) {
                     }
                 }
 
+                function getStateDescriptor(nextState) {
+                    switch (nextState) {
+                        case 'loading':
+                            return {
+                                label: 'Загрузка',
+                                message: 'Получаем актуальное состояние комнаты...'
+                            };
+                        case 'access_denied':
+                            return {
+                                label: 'Доступ ограничен',
+                                message: 'У вас нет доступа к состоянию вебинарной комнаты.'
+                            };
+                        case 'finished':
+                        case 'ended':
+                            return {
+                                label: 'Вебинар завершён',
+                                message: 'Эфир уже закончился. Запись будет доступна, если она предусмотрена.'
+                            };
+                        case 'live':
+                            return {
+                                label: 'Прямой эфир',
+                                message: 'Вебинар идёт. Вы можете смотреть трансляцию ниже.'
+                            };
+                        case 'scheduled':
+                        default:
+                            return {
+                                label: 'Ожидание старта',
+                                message: 'Вебинар ещё не начался. Мы автоматически обновим статус.'
+                            };
+                    }
+                }
+
+                function setStateMessage(nextState) {
+                    if (!stateValue && !stateMessage) {
+                        return;
+                    }
+                    var descriptor = getStateDescriptor(nextState);
+                    if (stateValue) {
+                        stateValue.textContent = descriptor.label;
+                    }
+                    if (stateMessage) {
+                        stateMessage.textContent = descriptor.message;
+                    }
+                }
+
                 function setStatus(nextStatus) {
                     if (!nextStatus) {
                         return;
@@ -464,9 +582,6 @@ function ui_webinar_room_render_shortcode($atts = array()) {
                     if (statusLabel) {
                         statusLabel.textContent = normalizeLabel(nextStatus);
                     }
-                    if (stateValue) {
-                        stateValue.textContent = nextStatus;
-                    }
                 }
 
                 function applyState(payload) {
@@ -475,8 +590,10 @@ function ui_webinar_room_render_shortcode($atts = array()) {
                     }
                     if (payload.state) {
                         setStatus(payload.state);
+                        setStateMessage(payload.state);
                     } else if (payload.status) {
                         setStatus(payload.status);
+                        setStateMessage(payload.status);
                     }
                 }
 
@@ -485,6 +602,7 @@ function ui_webinar_room_render_shortcode($atts = array()) {
                         return;
                     }
 
+                    setStateMessage('loading');
                     fetch(restUrl, {
                         credentials: 'same-origin',
                         headers: {
@@ -492,6 +610,9 @@ function ui_webinar_room_render_shortcode($atts = array()) {
                         }
                     }).then(function(response) {
                         if (!response.ok) {
+                            if (response.status === 401 || response.status === 403) {
+                                setStateMessage('access_denied');
+                            }
                             return null;
                         }
                         return response.json();
@@ -500,6 +621,7 @@ function ui_webinar_room_render_shortcode($atts = array()) {
                     }).catch(function() {});
                 }
 
+                setStateMessage(root.getAttribute('data-status') || 'scheduled');
                 window.setInterval(fetchState, 9000);
             });
         })();
