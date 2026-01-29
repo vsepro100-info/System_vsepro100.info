@@ -200,7 +200,11 @@ function core_engine_webinar_meta_key($field) {
 
 function core_engine_webinar_normalize_status($status) {
     $status = (string) sanitize_key($status);
-    $allowed = array('scheduled', 'live', 'ended');
+    if ($status === 'finished') {
+        $status = 'ended';
+    }
+
+    $allowed = array('scheduled', 'live', 'paused', 'ended');
     if (!in_array($status, $allowed, true)) {
         return 'scheduled';
     }
@@ -414,12 +418,37 @@ function core_engine_handle_webinar_set_status($webinar_id, $status, $context = 
         return;
     }
 
-    $status = core_engine_webinar_normalize_status($status);
-    update_post_meta($webinar_id, core_engine_webinar_meta_key('status'), $status);
+    $action = (string) sanitize_key($status);
+    if (!in_array($action, array('start', 'stop'), true)) {
+        error_log('core_engine: unsupported core_webinar_set_status action ' . $action . ' for webinar ' . $webinar_id);
+        return;
+    }
+
+    $current_status = core_engine_webinar_normalize_status(
+        (string) get_post_meta($webinar_id, core_engine_webinar_meta_key('status'), true)
+    );
+    $next_status = '';
+
+    if ($action === 'start' && $current_status === 'scheduled') {
+        $next_status = 'live';
+    }
+
+    if ($action === 'stop' && in_array($current_status, array('live', 'paused'), true)) {
+        $next_status = 'ended';
+    }
+
+    if ($next_status === '') {
+        error_log('core_engine: invalid core_webinar_set_status transition ' . $current_status . ' via ' . $action);
+        return;
+    }
+
+    update_post_meta($webinar_id, core_engine_webinar_meta_key('status'), $next_status);
 
     if (!empty($context)) {
         update_post_meta($webinar_id, core_engine_webinar_meta_key('status_context'), wp_json_encode($context));
     }
+
+    error_log('core_engine: core_webinar_set_status ' . $action . ' -> ' . $next_status . ' for webinar ' . $webinar_id);
 }
 
 add_action('core_webinar_set_status', 'core_engine_handle_webinar_set_status', 10, 3);

@@ -18,5 +18,12 @@ function post_webinar_routing_service_handle_attendance($payload) {
         'timestamp' => $payload['timestamp'] ?? null,
     );
 
+    error_log(
+        'post_webinar_routing_service: route ' .
+        ($attended ? 'attended' : 'not_attended') .
+        ' for webinar ' . ($context['webinar_id'] ?? '') .
+        ' lead ' . ($context['lead_id'] ?? '')
+    );
+
     do_action('post_webinar_route', $attended ? 'attended' : 'not_attended', $context);
 }

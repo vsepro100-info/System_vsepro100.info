@@ -18,6 +18,8 @@ function client_webinar_event_emitter_handle_completed($context) {
         return;
     }
 
+    error_log('client_webinar_event_emitter: emit webinar_completed for webinar ' . $payload['webinar_id'] . ' lead ' . $payload['lead_id']);
+
     do_action('webinar_completed', $payload);
 }
 
