@@ -45,4 +45,14 @@ function telegram_sender_handle($payload) {
             'text' => $text,
         ],
     ]);
+
+    if (is_wp_error($response)) {
+        error_log('telegram_send_message: request failed. ' . $response->get_error_message());
+        return;
+    }
+
+    $status_code = (int) wp_remote_retrieve_response_code($response);
+    if ($status_code < 200 || $status_code >= 300) {
+        error_log('telegram_send_message: unexpected response code ' . $status_code . '.');
+    }
 }
