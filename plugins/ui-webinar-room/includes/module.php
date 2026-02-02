@@ -50,6 +50,18 @@ function ui_webinar_room_register_state_routes() {
             ),
         )
     );
+
+    register_rest_route(
+        'webinar/v1',
+        '/webinars/(?P<id>\\d+)/cta',
+        array(
+            array(
+                'methods' => WP_REST_Server::CREATABLE,
+                'callback' => 'ui_webinar_room_handle_cta_event',
+                'permission_callback' => 'ui_webinar_room_can_emit_cta_event',
+            ),
+        )
+    );
 }
 
 /**
@@ -68,6 +80,28 @@ function ui_webinar_room_can_read_state($request) {
 
     if (ui_webinar_room_get_actor_role() === '') {
         error_log('ui_webinar_room_rest: denied access for user ' . (int) get_current_user_id());
+        return new WP_Error('webinar_rest_forbidden', 'Forbidden', array('status' => 403));
+    }
+
+    return true;
+}
+
+/**
+ * @param WP_REST_Request $request
+ * @return bool|WP_Error
+ */
+function ui_webinar_room_can_emit_cta_event($request) {
+    if (strtoupper($request->get_method()) !== 'POST') {
+        return new WP_Error('webinar_rest_method_not_allowed', 'Method not allowed', array('status' => 405));
+    }
+
+    if (!is_user_logged_in()) {
+        error_log('ui_webinar_room_rest: denied unauthenticated CTA emit');
+        return new WP_Error('webinar_rest_unauthorized', 'Authentication required', array('status' => 401));
+    }
+
+    if (ui_webinar_room_get_actor_role() === '') {
+        error_log('ui_webinar_room_rest: denied CTA emit for user ' . (int) get_current_user_id());
         return new WP_Error('webinar_rest_forbidden', 'Forbidden', array('status' => 403));
     }
 
@@ -295,6 +329,52 @@ function ui_webinar_room_handle_webinar_info_read($request) {
     return rest_ensure_response(ui_webinar_room_build_webinar_info($webinar_data));
 }
 
+/**
+ * @param WP_REST_Request $request
+ * @return WP_REST_Response|WP_Error
+ */
+function ui_webinar_room_handle_cta_event($request) {
+    $webinar_id = absint($request['id']);
+    if (!$webinar_id) {
+        return new WP_Error('invalid_webinar', 'Invalid webinar id', array('status' => 400));
+    }
+
+    $event = $request->get_param('event');
+    $event = is_string($event) ? sanitize_text_field($event) : '';
+    if ($event !== 'shown' && $event !== 'clicked') {
+        return new WP_Error('invalid_event', 'Invalid CTA event', array('status' => 400));
+    }
+
+    $webinar_data = apply_filters('core_webinar_get', (int) $webinar_id, array());
+    if (empty($webinar_data)) {
+        return new WP_Error('no_webinar', 'No webinar found', array('status' => 404));
+    }
+
+    $role = ui_webinar_room_get_actor_role();
+    $status = $webinar_data['status'] ?? 'scheduled';
+    $state_error = ui_webinar_room_assert_state_access($role, $status, (int) $webinar_id, 'cta');
+    if (is_wp_error($state_error)) {
+        return $state_error;
+    }
+
+    $context = array(
+        'webinar_id' => (int) $webinar_id,
+        'user_id' => (int) get_current_user_id(),
+    );
+
+    if ($event === 'shown') {
+        do_action('cta_shown', $context);
+        error_log('ui_webinar_room: cta_shown for webinar ' . (int) $webinar_id . ' user ' . (int) $context['user_id']);
+    }
+
+    if ($event === 'clicked') {
+        do_action('cta_clicked', $context);
+        error_log('ui_webinar_room: cta_clicked for webinar ' . (int) $webinar_id . ' user ' . (int) $context['user_id']);
+    }
+
+    return rest_ensure_response(array('ok' => true));
+}
+
 function ui_webinar_room_format_status_label($status) {
     switch ($status) {
         case 'live':
@@ -449,12 +529,36 @@ function ui_webinar_room_render_shortcode($atts = array()) {
             font-size: 14px;
             color: rgba(0, 0, 0, 0.7);
         }
+        .ui-webinar-room__cta {
+            margin-top: 20px;
+            padding: 16px;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.04);
+        }
+        .ui-webinar-room__cta-text {
+            margin: 0 0 10px;
+            font-size: 14px;
+            color: rgba(0, 0, 0, 0.7);
+        }
+        .ui-webinar-room__cta-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 16px;
+            border-radius: 999px;
+            border: 1px solid rgba(0, 0, 0, 0.18);
+            background: #fff;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
     </style>
     <section
         class="ui-webinar-room"
         data-webinar-id="<?php echo esc_attr((string) $webinar_id_value); ?>"
         data-status="<?php echo esc_attr($state); ?>"
         data-rest-url="<?php echo esc_url(rest_url('webinar/v1/state')); ?>"
+        data-cta-url="<?php echo esc_url(rest_url('webinar/v1/webinars/' . (int) $webinar_id_value . '/cta')); ?>"
         data-rest-nonce="<?php echo esc_attr($rest_nonce); ?>"
     >
         <header class="ui-webinar-room__header">
@@ -490,6 +594,14 @@ function ui_webinar_room_render_shortcode($atts = array()) {
                         <?php echo esc_html($video_label); ?>
                     </p>
                 </div>
+                <div class="ui-webinar-room__cta" data-cta hidden>
+                    <p class="ui-webinar-room__cta-text">
+                        <?php echo esc_html__('Узнать больше / Присоединиться к WHIEDA', 'ui-webinar-room'); ?>
+                    </p>
+                    <button type="button" class="ui-webinar-room__cta-button" data-cta-button>
+                        <?php echo esc_html__('Узнать больше / Присоединиться к WHIEDA', 'ui-webinar-room'); ?>
+                    </button>
+                </div>
             </div>
         </div>
     </section>
@@ -503,11 +615,15 @@ function ui_webinar_room_render_shortcode($atts = array()) {
 
             roots.forEach(function(root) {
                 var restUrl = root.getAttribute('data-rest-url') || '';
+                var ctaUrl = root.getAttribute('data-cta-url') || '';
                 var webinarRoom = window.webinarRoom || {};
                 var restNonce = root.getAttribute('data-rest-nonce') || '';
                 var statusLabel = root.querySelector('[data-status-label]');
                 var stateValue = root.querySelector('[data-state-value]');
                 var stateMessage = root.querySelector('[data-state-message]');
+                var ctaContainer = root.querySelector('[data-cta]');
+                var ctaButton = root.querySelector('[data-cta-button]');
+                var ctaShown = false;
 
                 if (!webinarRoom.nonce && restNonce) {
                     webinarRoom.nonce = restNonce;
@@ -591,9 +707,47 @@ function ui_webinar_room_render_shortcode($atts = array()) {
                     if (payload.state) {
                         setStatus(payload.state);
                         setStateMessage(payload.state);
+                        updateCtaVisibility(payload.state);
                     } else if (payload.status) {
                         setStatus(payload.status);
                         setStateMessage(payload.status);
+                        updateCtaVisibility(payload.status);
+                    }
+                }
+
+                function shouldShowCta(nextState) {
+                    return nextState === 'live' || nextState === 'finished' || nextState === 'ended';
+                }
+
+                function emitCtaEvent(eventName) {
+                    if (!ctaUrl) {
+                        return;
+                    }
+                    fetch(ctaUrl, {
+                        method: 'POST',
+                        credentials: 'same-origin',
+                        headers: {
+                            'X-WP-Nonce': webinarRoom.nonce,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            event: eventName
+                        })
+                    }).then(function() {}).catch(function() {});
+                }
+
+                function updateCtaVisibility(nextState) {
+                    if (!ctaContainer) {
+                        return;
+                    }
+                    if (shouldShowCta(nextState)) {
+                        ctaContainer.hidden = false;
+                        if (!ctaShown) {
+                            ctaShown = true;
+                            emitCtaEvent('shown');
+                        }
+                    } else {
+                        ctaContainer.hidden = true;
                     }
                 }
 
@@ -622,6 +776,12 @@ function ui_webinar_room_render_shortcode($atts = array()) {
                 }
 
                 setStateMessage(root.getAttribute('data-status') || 'scheduled');
+                updateCtaVisibility(root.getAttribute('data-status') || 'scheduled');
+                if (ctaButton) {
+                    ctaButton.addEventListener('click', function() {
+                        emitCtaEvent('clicked');
+                    });
+                }
                 window.setInterval(fetchState, 9000);
             });
         })();
