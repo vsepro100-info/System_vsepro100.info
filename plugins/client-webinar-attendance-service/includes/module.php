@@ -69,6 +69,17 @@ function client_webinar_attendance_emit(array $context, $attended) {
         ' for webinar ' . $context['webinar_id'] . ' lead ' . $context['lead_id']
     );
 
+    if ($attended) {
+        do_action(
+            'user_attended',
+            array(
+                'lead_id' => $context['lead_id'],
+                'webinar_id' => $context['webinar_id'],
+                'timestamp' => $context['timestamp'],
+            )
+        );
+    }
+
     do_action(
         'client_webinar_attendance_classified',
         array(
