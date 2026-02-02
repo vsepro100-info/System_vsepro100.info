@@ -22,6 +22,28 @@ function webinar_analytics_mvp_handle_cta_clicked($payload) {
     webinar_analytics_mvp_capture_event('cta_clicked', $payload);
 }
 
+function webinar_analytics_mvp_handle_ref_attribution($payload) {
+    $payload = is_array($payload) ? $payload : array();
+    $webinar_id = webinar_analytics_mvp_extract_webinar_id($payload);
+    if (!$webinar_id) {
+        return;
+    }
+
+    $event = isset($payload['event']) ? (string) sanitize_key($payload['event']) : '';
+    if ($event === '') {
+        return;
+    }
+
+    $ref_id = isset($payload['ref_id']) ? (string) $payload['ref_id'] : '';
+    $ref_id = $ref_id !== '' ? (string) sanitize_text_field($ref_id) : '';
+    if ($ref_id === '') {
+        return;
+    }
+
+    $timestamp = webinar_analytics_mvp_extract_timestamp($payload);
+    webinar_analytics_mvp_store_ref_attribution($webinar_id, $event, $ref_id, $timestamp);
+}
+
 /**
  * @param string $event
  * @param array<string, mixed>|mixed $payload
@@ -94,6 +116,10 @@ function webinar_analytics_mvp_get_storage($webinar_id) {
         $data['timestamps'] = array();
     }
 
+    if (!isset($data['ref_attribution']) || !is_array($data['ref_attribution'])) {
+        $data['ref_attribution'] = array();
+    }
+
     return $data;
 }
 
@@ -134,6 +160,56 @@ function webinar_analytics_mvp_increment_event($webinar_id, $event, $timestamp) 
 
     if (!update_option($key, $data)) {
         error_log('webinar_analytics_mvp: failed to update option for webinar ' . $webinar_id);
+    }
+}
+
+/**
+ * @param int $webinar_id
+ * @param string $event
+ * @param string $ref_id
+ * @param int $timestamp
+ * @return void
+ */
+function webinar_analytics_mvp_store_ref_attribution($webinar_id, $event, $ref_id, $timestamp) {
+    $webinar_id = absint($webinar_id);
+    if (!$webinar_id) {
+        return;
+    }
+
+    $event = (string) sanitize_key($event);
+    $ref_id = (string) sanitize_text_field($ref_id);
+    if ($event === '' || $ref_id === '') {
+        return;
+    }
+
+    $data = webinar_analytics_mvp_get_storage($webinar_id);
+    if (empty($data)) {
+        $data = array(
+            'counts' => array(),
+            'timestamps' => array(),
+            'ref_attribution' => array(),
+        );
+    }
+
+    if (!isset($data['ref_attribution'][$event]) || !is_array($data['ref_attribution'][$event])) {
+        $data['ref_attribution'][$event] = array();
+    }
+
+    $existing = $data['ref_attribution'][$event][$ref_id] ?? 0;
+    $data['ref_attribution'][$event][$ref_id] = (int) $existing + 1;
+    $data['timestamps']['ref_' . $event] = (int) $timestamp;
+
+    $key = webinar_analytics_mvp_option_key($webinar_id);
+    $existing_option = get_option($key, null);
+    if ($existing_option === null) {
+        if (!add_option($key, $data, '', false)) {
+            error_log('webinar_analytics_mvp: failed to add ref attribution for webinar ' . $webinar_id);
+        }
+        return;
+    }
+
+    if (!update_option($key, $data)) {
+        error_log('webinar_analytics_mvp: failed to update ref attribution for webinar ' . $webinar_id);
     }
 }
 
