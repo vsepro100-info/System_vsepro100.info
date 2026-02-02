@@ -35,6 +35,8 @@ System_vsepro100.info — модульная WordPress‑система, где 
 
 - **PROCESS (как работает архитектор)**
   - [ARCHITECT_MODE](PROCESS/ARCHITECT_MODE.md)
+  - [PRE_RELEASE_CHECKLIST](PROCESS/PRE_RELEASE_CHECKLIST.md)
+  - [TEST_PLAN_MVP](PROCESS/TEST_PLAN_MVP.md)
   - [DOCUMENT_TYPES](DOCUMENT_TYPES.md)
 
 - **SPEC / RUNBOOKS (как действовать)**
