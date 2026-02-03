@@ -73,16 +73,6 @@ function ui_webinar_room_can_read_state($request) {
         return new WP_Error('webinar_rest_method_not_allowed', 'Method not allowed', array('status' => 405));
     }
 
-    if (!is_user_logged_in()) {
-        error_log('ui_webinar_room_rest: denied unauthenticated access');
-        return new WP_Error('webinar_rest_unauthorized', 'Authentication required', array('status' => 401));
-    }
-
-    if (ui_webinar_room_get_actor_role() === '') {
-        error_log('ui_webinar_room_rest: denied access for user ' . (int) get_current_user_id());
-        return new WP_Error('webinar_rest_forbidden', 'Forbidden', array('status' => 403));
-    }
-
     return true;
 }
 
@@ -211,9 +201,9 @@ function ui_webinar_room_get_actor_role() {
  */
 function ui_webinar_room_assert_state_access($role, $status, $webinar_id, $endpoint) {
     $state = ui_webinar_room_normalize_state($status);
-    if ($role === 'attendee' && $state === 'draft') {
+    if (($role === 'attendee' || $role === '') && $state === 'draft') {
         error_log(
-            'ui_webinar_room_rest: denied attendee access to ' .
+            'ui_webinar_room_rest: denied public access to ' .
             $endpoint .
             ' for webinar ' .
             (int) $webinar_id .
@@ -268,7 +258,7 @@ function ui_webinar_room_handle_webinars_list($request) {
             $webinar_data = apply_filters('core_webinar_get', (int) $post->ID, array());
             $status = $webinar_data['status'] ?? 'scheduled';
             $state = ui_webinar_room_normalize_state($status);
-            if ($role === 'attendee' && $state === 'draft') {
+            if (($role === 'attendee' || $role === '') && $state === 'draft') {
                 continue;
             }
             $items[] = ui_webinar_room_build_webinar_info($webinar_data);
