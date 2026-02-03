@@ -13,6 +13,8 @@ define('WHIEDA_REF_COOKIE', 'wh_ref');
 
 define('WHIEDA_REF_COOKIE_TTL', 30 * DAY_IN_SECONDS);
 
+define('WHIEDA_REF_CLICKS_META', 'ref_total_clicks');
+
 define('WHIEDA_CONTACT_FORM_ACTION', 'whieda_public_contact_submit');
 
 define('WHIEDA_REGISTER_ACTION', 'whieda_register_submit');
@@ -70,6 +72,9 @@ function whieda_core_capture_ref_cookie() {
         return;
     }
 
+    $clicks = (int) get_user_meta($user->ID, WHIEDA_REF_CLICKS_META, true);
+    update_user_meta($user->ID, WHIEDA_REF_CLICKS_META, $clicks + 1);
+
     $expires = time() + WHIEDA_REF_COOKIE_TTL;
     setcookie(WHIEDA_REF_COOKIE, $ref, $expires, COOKIEPATH, COOKIE_DOMAIN, is_ssl(), false);
     $_COOKIE[WHIEDA_REF_COOKIE] = $ref;
@@ -90,6 +95,13 @@ function whieda_core_resolve_ref_login() {
 
     if ($ref === '' && isset($_COOKIE[WHIEDA_REF_COOKIE])) {
         $ref = sanitize_user(wp_unslash($_COOKIE[WHIEDA_REF_COOKIE]));
+    }
+
+    if ($ref === '' && is_user_logged_in()) {
+        $invited_by = get_user_meta(get_current_user_id(), 'invited_by', true);
+        if (is_string($invited_by) && $invited_by !== '') {
+            $ref = sanitize_user($invited_by);
+        }
     }
 
     if ($ref === '') {
