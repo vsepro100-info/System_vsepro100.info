@@ -15,6 +15,7 @@ add_action('admin_post_nopriv_core_web_form_submit', 'integration_web_form_handl
 
 function integration_web_form_render_shortcode() {
     $success = isset($_GET['success']) && $_GET['success'] === '1';
+    $ref = function_exists('legacy_referral_get_ref') ? legacy_referral_get_ref() : '';
 
     ob_start();
     if ($success) {
@@ -24,6 +25,9 @@ function integration_web_form_render_shortcode() {
     <form action="<?php echo esc_url(admin_url('admin-post.php')); ?>" method="post">
         <input type="hidden" name="action" value="core_web_form_submit">
         <?php wp_nonce_field('core_web_form_submit', 'core_web_form_nonce'); ?>
+        <?php if ($ref !== '') : ?>
+            <input type="hidden" name="ref" value="<?php echo esc_attr($ref); ?>">
+        <?php endif; ?>
         <p>
             <label for="core-web-form-name"><?php echo esc_html__('Name', 'integration-web-form'); ?></label>
             <input type="text" id="core-web-form-name" name="name" required>
@@ -50,12 +54,16 @@ function integration_web_form_handle_submit() {
 
     $name = isset($_POST['name']) ? sanitize_text_field(wp_unslash($_POST['name'])) : '';
     $email = isset($_POST['email']) ? sanitize_email(wp_unslash($_POST['email'])) : '';
+    $ref = isset($_POST['ref']) ? sanitize_user(wp_unslash($_POST['ref'])) : '';
 
     $payload = array(
         'source' => 'web_form',
         'name' => $name,
         'email' => $email,
     );
+    if ($ref !== '') {
+        $payload['ref'] = $ref;
+    }
 
     do_action('core_ingest_event', $payload);
 

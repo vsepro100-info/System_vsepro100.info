@@ -194,7 +194,7 @@ function ui_webinar_room_get_actor_role() {
 
     $user = wp_get_current_user();
     $roles = is_array($user->roles) ? $user->roles : array();
-    $attendee_roles = array('attendee', 'candidate', 'partner', 'subscriber');
+    $attendee_roles = array('candidate', 'partner');
     if (array_intersect($attendee_roles, $roles)) {
         return 'attendee';
     }

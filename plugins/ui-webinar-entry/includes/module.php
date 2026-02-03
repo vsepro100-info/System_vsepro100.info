@@ -4,6 +4,9 @@ defined('ABSPATH') || exit;
 
 function ui_webinar_entry_render_shortcode() {
     $registration_url = home_url('/signup/');
+    if (function_exists('legacy_referral_append_ref')) {
+        $registration_url = legacy_referral_append_ref($registration_url);
+    }
 
     ob_start();
     ?>
