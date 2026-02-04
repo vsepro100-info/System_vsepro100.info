@@ -42,6 +42,9 @@ Last updated: 2026-01-28
 - Use the canonical build order with no backward dependency.
 
 ## 6. Definition of Done
-- Deliverables exist and AC-1 through AC-7 are satisfied.
-- No STOP Signals observed.
-- OK Signals observed for a full S1–S5 run.
+Этап считается завершённым только при выполнении ВСЕХ условий:
+— все deliverables созданы;
+— все acceptance criteria выполнены;
+— PRODUCT CANON и SPEC смёржены;
+— SYSTEM_STATE.md обновлён;
+— отсутствуют блокирующие замечания Product Owner.
