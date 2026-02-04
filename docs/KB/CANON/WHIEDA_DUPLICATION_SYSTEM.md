@@ -4,123 +4,57 @@ Last updated: 2026-01-28
 
 # WHIEDA Duplication System — CANON v1.0
 
-## 1. Зачем существует система
+## 1. Purpose of WHIEDA Duplication System
+- One closed contour.
+- From end of presentation to initiated action (S5).
 
-Система создаётся для ускорения и упрощения дубликации в сетевом бизнесе WHIEDA.
+## 2. System Boundaries
+- Explicitly excludes purchase.
+- Explicitly excludes onboarding.
+- Explicitly excludes education.
+- Explicitly excludes earnings.
 
-Её задача:
-— сократить путь от первого контакта до первого результата;
-— убрать зависимость от навыков новичка;
-— заменить хаотичные действия понятным, повторяемым сценарием.
+## 3. Core Principles (Non-Negotiable)
+- Trust over conversion.
+- System stronger than partner.
+- No personalization in S2–S3.
+- No pressure, no urgency.
 
-Система не обучает «сетевому бизнесу в целом».
-Она ведёт человека по одному правильному пути.
+## 4. User States
+- S1 — End of presentation: presentation completed and user enters system contour.
+- S2 — Orientation: user sees canonical next steps without personalization.
+- S3 — Confirmation: user validates understanding of the path without personalization.
+- S4 — Decision: user confirms intent to act within the contour.
+- S5 — Initiated action: user triggers the first action in the system.
 
-## 2. Главный результат системы
+## 5. Architectural Modules
+- M1 — Entry capture: records the transition from presentation to system contour.
+- M2 — Orientation flow: provides canonical steps for S2.
+- M3 — Confirmation flow: provides canonical steps for S3.
+- M4 — Decision gate: captures the S4 decision.
+- M5 — Action trigger: initiates S5 action.
+- M6 — State tracking: stores and exposes S1–S5 status.
+- M7 — Audit log: immutable record of transitions and actions.
 
-Успех системы = человек:
+## 6. Entities
+- E1 — User mapped to M6.
+- E2 — Presentation end event mapped to M1.
+- E3 — Orientation step mapped to M2.
+- E4 — Confirmation marker mapped to M3.
+- E5 — Decision record mapped to M4.
+- E6 — Action trigger mapped to M5.
+- E7 — Transition log mapped to M7.
 
-1) увидел презентацию;
-2) принял решение стать партнёром;
-3) совершил первую покупку;
-4) получил ощущение, что система работает;
-5) начал приглашать других в тот же день или на следующий.
+## 7. Plugin Grouping
+- Plugin A: M1 and M6.
+- Plugin B: M2.
+- Plugin C: M3.
+- Plugin D: M4 and M5.
+- Plugin E: M7.
 
-Если этот цикл запускается — система работает.
-Если нет — система считается неуспешной, независимо от кода, дизайна и функций.
+## 8. Build Order
+- Canonical order: M1 → M6 → M2 → M3 → M4 → M5 → M7.
+- Rule: no backward dependency.
 
-## 3. Ключевая идея продукта
-
-Система:
-— стирает географические границы;
-— позволяет дублировать действия в один день;
-— создаёт эффект «я не один, за мной стоит команда и наставник».
-
-Человек больше не зависит от:
-— умения проводить презентации;
-— личного опыта;
-— уверенности в себе;
-— знания маркетинга.
-
-Он следует системе.
-
-## 4. Мышление первого дня (24 часа)
-
-В первые 24 часа после презентации человек должен вынести три мысли:
-
-1) Это серьёзная система с сильной командой и наставником.
-2) Если тянуть — старт будет хуже, позиция будет упущена.
-3) Лучшее, что я могу сделать сейчас — действовать по шагам системы.
-
-Система не убеждает логикой.
-Она создаёт ощущение движения и упущенной позиции.
-
-## 5. Принцип позиции
-
-В бинарной системе WHIEDA ценность имеет не абстрактная «возможность», а конкретная позиция.
-
-Позицию нельзя зафиксировать без действия.
-Задержка = потеря потенциально выгодного места в структуре.
-
-Система должна усиливать понимание:
-не решение = нейтрально,
-не решение = хужее положение старта.
-
-## 6. Один путь вместо множества вариантов
-
-Система не даёт человеку выбирать стратегию.
-
-Она:
-— запрещает «долго думать»;
-— не предлагает альтернативных сценариев;
-— ведёт по одному оптимальному маршруту.
-
-Лучше один сильный путь,
-чем десять «хороших».
-
-## 7. Роль команды и наставника
-
-Человек входит не в одиночный бизнес, а в систему с командой.
-
-В системе есть:
-— спонсор (человек, который пригласил);
-— наставник (спикер / лидер, обучающий всех через систему).
-
-Даже если спонсор — новичок,
-человек не остаётся без поддержки.
-
-## 8. Обучение как мотивация
-
-Обучение — не справка, а рычаг.
-
-Система предусматривает уровни доступа:
-— базовое обучение;
-— продвинутое / VIP-обучение.
-
-Доступ к продвинутому обучению:
-— либо через сильный старт,
-— либо через быстрые действия в первые дни.
-
-Обучение усиливает желание действовать быстрее.
-
-## 9. Что система НЕ делает
-
-Система не:
-— продаёт продукт;
-— не уговаривает;
-— не объясняет маркетинг WHIEDA;
-— не заменяет компанию.
-
-Она усиливает правильное поведение
-и ускоряет принятие решений.
-
-## 10. Принцип масштаба
-
-Если система работает для одного человека —
-она должна работать для тысячи.
-
-Если требуется «ручное сопровождение» —
-система считается незавершённой.
-
-Продукт должен дублироваться так же,
-как и бизнес, который он поддерживает.
+## 9. Change Rule
+- Any logic change requires new CANON version.
