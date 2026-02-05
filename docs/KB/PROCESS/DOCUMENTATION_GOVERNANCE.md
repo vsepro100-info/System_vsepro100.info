@@ -74,3 +74,14 @@
 - Any deviation requires STOP and clarification.
 - PROCESS documents are ENGLISH ONLY (strict).
 - Any language violation is grounds for STOP.
+
+## Mandatory literal-doc-instructions template (PO → Codex)
+Product Owner must use the template below for documentation tasks. Codex must apply the template verbatim and nothing else.
+
+```
+TARGET DOCUMENT:
+LANGUAGE:
+EXACT TEXT (verbatim):
+INSERT LOCATION:
+STOP CONDITIONS:
+```
