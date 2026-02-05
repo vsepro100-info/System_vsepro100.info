@@ -55,6 +55,8 @@ Any deviation is a process violation and triggers STOP until corrected.
   - Next Codex command block
 - No meta commentary, no step narration, no explanations.
 - This rule applies across chats and sessions.
+- All instructions for Codex MUST be provided inside explicit copy-paste blocks.
+  Instructions given outside such blocks are invalid and must be ignored.
 
 # Правило немедленной фиксации этапа
 Любой этап работы считается завершённым только после фиксации
@@ -86,7 +88,7 @@ Any deviation is a process violation and triggers STOP until corrected.
   - language
 - Codex must apply changes literally, without rewording, additions, or expansion beyond explicit Product Owner instructions.
 - Any deviation requires STOP and clarification.
-- PROCESS documents are ENGLISH ONLY (strict).
+- PROCESS documents are RUSSIAN ONLY (strict).
 - Any language violation is grounds for STOP.
 
 ## Mandatory literal-doc-instructions template (PO → Codex)
