@@ -64,3 +64,13 @@
 # Docs-only PR Review Rule
 - If a pull request is docs-only, affects no more than 2–3 files, has a micro-diff, and touches only ARCHIVE/RAW materials or document headers, a structured Codex report is sufficient for Product Owner approval.
 - Any changes to CANON, PROCESS, SYSTEM_STATE, or DECISIONS_LOG require a patch file or full document text for review.
+
+# Documentation task scope, literal execution, and language rules
+- For documentation tasks, Product Owner must explicitly specify:
+  - target document
+  - exact scope of change
+  - language
+- Codex must apply changes literally, without rewording, additions, or expansion beyond explicit Product Owner instructions.
+- Any deviation requires STOP and clarification.
+- PROCESS documents are ENGLISH ONLY (strict).
+- Any language violation is grounds for STOP.
