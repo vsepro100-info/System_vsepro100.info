@@ -16,6 +16,7 @@ Documentation Audit — CLOSED
 - BASELINE and PRODUCT_CORE archived.
 - Governance rules finalized.
 - Documentation Governance frozen at v1.0.
+- Engineering v0 scaffold completed (non-executable, gated).
 
 ## Статус KB (структура/целостность)
 
