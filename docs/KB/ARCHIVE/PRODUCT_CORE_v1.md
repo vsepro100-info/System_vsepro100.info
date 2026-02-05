@@ -1,3 +1,5 @@
+> **ARCHIVED:** This document is archived and superseded by docs/KB/CANON/WHIEDA_DUPLICATION_SYSTEM.md. It must not be used as a source of truth.
+
 # PRODUCT CORE — v1
 WHIEDA Duplication System
 

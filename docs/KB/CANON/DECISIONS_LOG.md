@@ -21,6 +21,7 @@ Last updated: 2026-01-28
 | 2026-01-28 | Единственный источник истины — Knowledge Base в репозитории; чаты и GPT-файлы не считаются каноном. | Исключить расхождения и неканоничные источники. | KB: DECISIONS_LOG.md |
 | 2026-01-28 | Зафиксированы CANON и READY-TO-BUILD SPEC WHIEDA Duplication System v1.0. | Закрепить продуктовый канон и готовую спецификацию в KB. | KB: CANON/WHIEDA_DUPLICATION_SYSTEM.md; SPEC/WHIEDA_DUPLICATION_READY_TO_BUILD_SPEC_v1.0.md |
 | 2026-02-xx | Принят Product Working Agreement как обязательная рамка взаимодействия и принятия решений в проекте. Ответственность за результат закреплена за Product / Head of Product. | Зафиксировать продуктовый уровень управления и рамку взаимодействия. | KB: PRODUCT_WORKING_AGREEMENT.md |
+| 2026-02-xx | Archive PRODUCT_CORE.md to eliminate conflicting product definitions. | Single source of truth in KB/CANON. | PR: this PR |
 
 ## Процесс разработки (канонический workflow)
 
