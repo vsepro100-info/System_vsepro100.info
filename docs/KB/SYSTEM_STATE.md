@@ -6,7 +6,14 @@ Last updated: 2026-02-05
 
 ## Текущий Stage Gate
 
+Documentation Audit — CLOSED
+
 ## Последние зафиксированные изменения (PR)
+
+- Documentation audit completed.
+- SYSTEM_STATE anchor established.
+- BASELINE and PRODUCT_CORE archived.
+- Governance rules finalized.
 
 ## Статус KB (структура/целостность)
 
@@ -15,3 +22,8 @@ Last updated: 2026-02-05
 ## Открытые риски/трещины
 
 ## Следующие шаги (только после закрытия аудита)
+
+## Engineering Phase
+
+Status: OPEN  
+Scope: Architecture and code changes are now permitted only via Codex PRs under Product Owner control.
