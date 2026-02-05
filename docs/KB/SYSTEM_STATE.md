@@ -11,6 +11,7 @@ Documentation Audit — CLOSED
 ## Последние зафиксированные изменения (PR)
 
 - Documentation audit completed.
+- Canonical PR lifecycle handshake adopted and enforced.
 - SYSTEM_STATE anchor established.
 - BASELINE and PRODUCT_CORE archived.
 - Governance rules finalized.
