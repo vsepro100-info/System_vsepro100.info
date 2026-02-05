@@ -40,6 +40,8 @@ Last updated: 2026-01-28
 | docs/KB/KNOWN_ISSUES.md | Мигрирован в RUNBOOKS | [SPEC/RUNBOOKS/TEST_RELEASE](../SPEC/RUNBOOKS/TEST_RELEASE.md) |
 | docs/KB/LEGACY_ROOT_DOCS.md | Заменён этой картой | [ARCHIVE/LEGACY_DOCS](LEGACY_DOCS.md) |
 
+- [ARCHIVE/BASELINE_2026-01-28](BASELINE_2026-01-28.md) — Снимок состояния системы на дату.
+
 ## docs/webinars и прочие
 | Источник | Статус | Канонический источник |
 | --- | --- | --- |
