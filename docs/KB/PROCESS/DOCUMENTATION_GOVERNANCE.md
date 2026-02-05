@@ -86,3 +86,27 @@ EXACT TEXT (verbatim):
 INSERT LOCATION:
 STOP CONDITIONS:
 ```
+
+## Normative examples (copy-paste)
+The examples below are normative and must be followed as written.
+
+**Example A — add a subsection to an existing doc**
+```
+TARGET DOCUMENT: docs/KB/PROCESS/DOCUMENTATION_GOVERNANCE.md
+LANGUAGE: EN
+EXACT TEXT (verbatim):
+## Example Subsection Title
+- Example bullet line.
+INSERT LOCATION: After the "Mandatory literal-doc-instructions template (PO → Codex)" section.
+STOP CONDITIONS: Do not change any other text.
+```
+
+**Example B — add a single rule line**
+```
+TARGET DOCUMENT: docs/KB/PROCESS/DOCUMENTATION_GOVERNANCE.md
+LANGUAGE: EN
+EXACT TEXT (verbatim):
+- Example rule line.
+INSERT LOCATION: Under the "# Запрет" section, after the existing list items.
+STOP CONDITIONS: No rewrites, no removals.
+```
