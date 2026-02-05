@@ -40,6 +40,8 @@
 4) Tester executes verdict and reports "Merged".
 5) Only then a new task may be issued.
 Issuing a new task before step (4) is prohibited.
+The PR handshake sequence is the canonical and mandatory workflow.
+Any deviation is a process violation and triggers STOP until corrected.
 
 # Правило «Один PR — один этап фиксации»
 Каждый этап фиксации оформляется отдельным PR.
