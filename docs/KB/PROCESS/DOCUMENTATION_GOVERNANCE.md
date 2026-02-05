@@ -1,3 +1,6 @@
+Status: Frozen (v1.0)
+Changes require explicit PO decision and separate PR.
+
 # Назначение документа
 Зафиксировать обязательные правила ведения процессной документации и фиксации решений в репозитории.
 
