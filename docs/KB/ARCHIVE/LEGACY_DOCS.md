@@ -25,6 +25,8 @@ Last updated: 2026-01-28
 | CLIENT_WEBINAR_SCENARIO_SERVICE.md | Перенесён в ARCHIVE (legacy naming) | [ARCHIVE/MIGRATED_NOTES](MIGRATED_NOTES.md) |
 | ARGUMENTS_BANK.md | Мигрирован в DRAFTS | [DRAFTS/IDEAS](../DRAFTS/IDEAS.md) |
 
+- [ARCHIVE/PRODUCT_CORE_v1](PRODUCT_CORE_v1.md) — Superseded by CANON: WHIEDA_DUPLICATION_SYSTEM.
+
 ## Старые KB‑документы
 | Источник | Статус | Канонический источник |
 | --- | --- | --- |
