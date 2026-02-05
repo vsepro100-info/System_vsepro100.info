@@ -1,0 +1,12 @@
+- Engineering v0 is a non-executable scaffold.
+- Purpose: define structure only, zero runtime impact.
+- Forbidden:
+  - WordPress hooks
+  - REST endpoints
+  - Cron jobs
+  - DB access or migrations
+  - Admin UI
+- Allowed:
+  - Files inside src/engineering/*
+  - No runtime includes
+  - No side effects

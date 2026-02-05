@@ -23,6 +23,10 @@ Documentation Audit — CLOSED
 ## Статус модулей (CORE / Webinars / прочее)
 
 ## Открытые риски/трещины
+### Resolved issues / risks
+- Missing ENGINEERING_V0_SCOPE.md — resolved
+- PROCESS language rule mismatch — resolved
+- Codex instruction format rule — enforced
 
 ## Следующие шаги (только после закрытия аудита)
 
