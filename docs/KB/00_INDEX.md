@@ -10,6 +10,7 @@ System_vsepro100.info — модульная WordPress‑система, где 
 ## Текущий статус
 - CORE — заморожен.
 - Webinars — в разработке.
+- SYSTEM_STATE → [SYSTEM_STATE](SYSTEM_STATE.md)
 
 ## Быстрые входы (entry‑points)
 - **Старт нового модуля** → [TEMPLATE_NEW_MODULE](TEMPLATE_NEW_MODULE.md) → [CANON/MODULE_BOUNDARIES](CANON/MODULE_BOUNDARIES.md) → [CANON/DECISIONS_LOG](CANON/DECISIONS_LOG.md).
