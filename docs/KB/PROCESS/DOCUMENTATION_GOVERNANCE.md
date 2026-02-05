@@ -36,6 +36,13 @@
 # Правило «Один PR — один этап фиксации»
 Каждый этап фиксации оформляется отдельным PR.
 
+# Product Owner command format (concise)
+- Chat messages must contain only:
+  - PR verdict (MERGE APPROVED / STOP)
+  - Next Codex command block
+- No meta commentary, no step narration, no explanations.
+- This rule applies across chats and sessions.
+
 # Правило немедленной фиксации этапа
 Любой этап работы считается завершённым только после фиксации
 принятых решений в документации репозитория и merge соответствующего PR.
