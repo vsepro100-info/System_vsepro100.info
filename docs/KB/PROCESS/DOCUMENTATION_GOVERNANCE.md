@@ -33,6 +33,14 @@
 5. Product Owner проверяет и даёт OK.
 6. Только после merge этап считается завершённым.
 
+## PR lifecycle handshake (mandatory)
+1) Codex delivers PR.
+2) Tester reports result.
+3) PO issues VERDICT (MERGE APPROVED / STOP).
+4) Tester executes verdict and reports "Merged".
+5) Only then a new task may be issued.
+Issuing a new task before step (4) is prohibited.
+
 # Правило «Один PR — один этап фиксации»
 Каждый этап фиксации оформляется отдельным PR.
 
