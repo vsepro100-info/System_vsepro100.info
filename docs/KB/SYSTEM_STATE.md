@@ -15,6 +15,7 @@ Documentation Audit — CLOSED
 - SYSTEM_STATE anchor established.
 - BASELINE and PRODUCT_CORE archived.
 - Governance rules finalized.
+- Documentation Governance frozen at v1.0.
 
 ## Статус KB (структура/целостность)
 
