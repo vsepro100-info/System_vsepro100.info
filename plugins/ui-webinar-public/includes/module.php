@@ -75,6 +75,9 @@ function ui_webinar_public_render_shortcode() {
     $status = $webinar['status'] ?? 'scheduled';
     $cta_text = $webinar['cta_text'] ?? 'Перейти в комнату вебинара';
     $cta_link = $webinar['cta_link'] ?? home_url('/account/webinar_room/');
+    if (function_exists('legacy_referral_append_ref')) {
+        $cta_link = legacy_referral_append_ref($cta_link);
+    }
 
     $status_label = ui_webinar_public_format_status_label($status);
 
